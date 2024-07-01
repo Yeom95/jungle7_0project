@@ -22,10 +22,9 @@
 
     <!--style-->
     <style type="text/css">
-    .formname 
+    .pageUI
     {
-        width: 300px;
-        margin:auto;
+        width: 10px;
     }
 
     #formvalue
@@ -53,15 +52,13 @@
 
         function LogIn()
         {
-            
+            location.href = 'MoneyRankMain.html';
         }
     </script>
 
     </head>
 <body>
-    <div class="formname">
-        아이디:<input id="formvalue" class="form-control" placeholder="ID">
-        비밀번호:<input id="formvalue" class="form-control" placeholder="비밀번호">
+    <div class="pageUI">
         <button id="registerBtn" onclick="Register()" type="submit" class="btn btn-primary">회원가입</button>
         <button id="logInBtn" onclick="LogIn()" type="submit" class="btn btn-primary">로그인</button>
     </div>
