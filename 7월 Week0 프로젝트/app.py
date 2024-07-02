@@ -88,8 +88,28 @@ def logout():
 
 @app.route('/register',methods=['POST'])
 def register():
-    #회원가입 기능 구현
-    return 0
+    try:
+        # 클라이언트로부터 JSON 데이터 받기
+        userId_receive = request.form['userId_give']
+        userPw_receive = request.form['userPw_give']
+        userName_receive = request.form['userName_give']
+        
+        # MongoDB에 데이터 삽입
+        data = {
+            'userId': userId_receive,
+            'userPw': userPw_receive,
+            'userName': userName_receive
+        }
+            
+        result = collection.insert_one(data)
+        # 삽입 결과 응답
+        response = {
+            "message": "데이터가 성공적으로 삽입되었습니다.",
+            "inserted_id": str(result.inserted_id)
+        }
+        return jsonify(response), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/getUserRank',methods=['GET'])
 def getUserRank():
@@ -180,7 +200,7 @@ def addCost():
         return jsonify(response), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    return 0
+
 
 @app.route('/editCost',methods=['POST'])
 def editCost():
