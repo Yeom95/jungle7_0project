@@ -1,12 +1,14 @@
 import calendar
 import json
-from datetime import datetime
+import datetime
+import jwt
+from datetime import timedelta
 from flask import Flask,render_template,jsonify,request
 from flask.json.provider import JSONProvider
 from flask_jwt_extended import *
 from bson import ObjectId
-app = Flask(__name__)
 
+app = Flask(__name__)
 from pymongo import MongoClient
 #client = MongoClient('mongodb://test:test@localhost',27017)
 client = MongoClient('localhost',27017)
@@ -19,9 +21,11 @@ app.config.update(
     JWT_SECTRET_KEY = "Secret Key"
 )
 
-user_id = 
+
 #JWT 확장 모듈을 flask 어플리케이션에 등록
-jwt = JWTManager(app)
+jwtModule = JWTManager(app)
+
+SECRET_KEY = "SecretKey"
 
 #유저별 주간,월간 금액합계 문제
 #날짜,요일 계산
@@ -49,12 +53,34 @@ def get_month_days(year,month):
 
 @app.route('/')
 def home():
-    return render_template('MoneyRank.html')
+    return render_template('login.html')
 
 @app.route('/login',methods=['GET'])
 def login():
+    #로그인 기능 구현
+    #모든 id,pw값 불러옴
+    result = list(collection.find({}))
 
-    return 0
+    print(request.form['id_send'])
+    print(request.form['pw_send'])
+    
+    user_id = request.form['id_send']
+    user_pw = request.form['pw_send']
+
+    for user in result:
+        #아이디,비밀번호가 일치하지 않는 경우
+        if(user_id != user['userId'] or user_pw != user['userPw']):
+            return jsonify(result = "로그인 실패")
+        #아이디,비밀번호가 일치하는 경우
+        #검증된 경우,access 토큰 반환
+        else: 
+            payload = {
+			'id': user_id,
+			'exp': datetime.datetime.now() + datetime.timedelta(seconds=60)  # 로그인 24시간 유지
+		}
+            token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+
+    return jsonify({'result': 'success', 'token': token})
 
 @app.route('/logout',methods=['GET'])
 def logout():
@@ -63,22 +89,64 @@ def logout():
 
 @app.route('/register',methods=['POST'])
 def register():
-    #회원가입 기능 구현
-    return 0
+    try:
+        # 클라이언트로부터 JSON 데이터 받기
+        userId_receive = request.form['userId_give']
+        userPw_receive = request.form['userPw_give']
+        userName_receive = request.form['userName_give']
+        
+        # MongoDB에 데이터 삽입
+        data = {
+            'userId': userId_receive,
+            'userPw': userPw_receive,
+            'userName': userName_receive
+        }
+            
+        result = collection.insert_one(data)
+        # 삽입 결과 응답
+        response = {
+            "message": "데이터가 성공적으로 삽입되었습니다.",
+            "inserted_id": str(result.inserted_id)
+        }
+        return jsonify(response), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/getUserRank',methods=['GET'])
+def getUserRank():
+
+    date = request.args.get('date')
+    # 유저 아이디 입력
+    userId_receive = request.form["userID_give"]
+    # MongoDB 집계 파이프라인
+    pipeline = [
+        {"$match": {"date": date}},  # date로 필터링
+        {"$group": {"_id": userId_receive, "total_cost": {"$sum": {"$toInt": "$cost"}}}},
+        {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
+    ]
+
+    # 집계 실행
+    result = list(collection.aggregate(pipeline))
+
+    # 결과를 JSON 형식으로 반환?
+    return jsonify({'result': 'success', 'moneyRankList': result})
 
 @app.route('/getAllRank',methods=['GET'])
 def getAllRank():
-    #유저별 금액합계 조회 및 정렬 기능 구현
+
+    date = request.args.get('date')
+    
     # MongoDB 집계 파이프라인
     pipeline = [
+        {"$match": {"date": date}},  # date로 필터링
         {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
         {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
     ]
+
     # 집계 실행
     result = list(collection.aggregate(pipeline))
     # 결과를 JSON 형식으로 반환?
     return jsonify({'result': 'success', 'moneyRankList': result})
-    return 0
 
 @app.route('/setMyCost')
 def myCalendar():
@@ -133,17 +201,37 @@ def addCost():
         return jsonify(response), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    return 0
+
 
 @app.route('/editCost',methods=['POST'])
 def editCost():
-    #사용금액 수정 기능 구현
-    return 0
+    try:
+        id = request.form['id']
+        category = request.form['category']
+        money = request.form['money']
+
+        # MongoDB에서 해당 문서 업데이트
+        result = db.moneyPlan.update_one(
+            {"_id": ObjectId(id)},
+            {"$set": {"category": category, "money": money}}
+        )
+
+        if result.modified_count > 0:
+            return jsonify({"result": "success", "message": "사용금액이 수정되었습니다."}), 200
+        else:
+            return jsonify({"result": "fail", "message": "해당 ID를 가진 문서가 없습니다."}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/deleteCost',methods=['POST'])
 def deleteCost():
     #사용금액 삭제 기능 구현
-    return 0
+    id = request.form['id']
+    db.moneyPlan.delete_one({'_id': ObjectId(id)})
+    return jsonify({'result': 'success'})
 
+#5000으로 수정 필요
 if __name__ == '__main__':
-    app.run('0.0.0.0',port=5000,debug=True)
+    app.run('0.0.0.0',port=5001,debug=True)
