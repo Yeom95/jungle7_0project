@@ -1,3 +1,5 @@
+import calendar
+from datetime import datetime
 from flask import Flask,render_template,jsonify,request
 from flask.json.provider import JSONProvider
 from bson import ObjectId
@@ -37,6 +39,23 @@ def getAllRank():
     #유저별 금액합계 조회 및 정렬 기능 구현
     return 0
 
+@app.route('/setMyCost')
+def myCalendar():
+    today = datetime.today()
+
+    year = today.year
+    month = today.month + 1
+
+    cal = calendar.Calendar(firstweekday=6)
+    month_days = cal.monthdayscalendar(year,month)
+
+    month_name = calendar.month_name[month]
+    print(month_name)
+
+    return render_template('MoneyRankEditMode.html',month_name=month_name, year=year, month_days=month_days)
+
+
+
 @app.route('/addCost',methods=['POST'])
 def addCost():
     #사용금액 등록 기능 구현
@@ -51,3 +70,6 @@ def editCost():
 def deleteCost():
     #사용금액 삭제 기능 구현
     return 0
+
+if __name__ == '__main__':
+    app.run('0.0.0.0',port=5000,debug=True)
