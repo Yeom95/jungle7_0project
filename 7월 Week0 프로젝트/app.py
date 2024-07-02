@@ -1,4 +1,5 @@
 import calendar
+import json
 from datetime import datetime
 from flask import Flask,render_template,jsonify,request
 from flask.json.provider import JSONProvider
@@ -10,6 +11,7 @@ from pymongo import MongoClient
 #client = MongoClient('mongodb://test:test@localhost',27017)
 client = MongoClient('localhost',27017)
 db = client.dbjungle
+collection = db['moneyPlan']
 
 #토큰 생성에 사용될 key를 flask 환경 변수에 등록
 app.config.update(
@@ -24,6 +26,18 @@ jwt = JWTManager(app)
 #날짜,요일 계산
 #수정 기능 사용 시 폼처리
 #유저 데이터 형식
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self, o)
+class CustomJSONProvider(JSONProvider):
+    def dumps(self, obj, **kwargs):
+        return json.dumps(obj, **kwargs, cls=CustomJSONEncoder)
+    def loads(self, s, **kwargs):
+        return json.loads(s, **kwargs)
+app.json = CustomJSONProvider(app)
 
 #연도와 몇월인지 받으면,날짜와 해당 달 이름 가져오는 함수
 def get_month_days(year,month):
@@ -53,6 +67,15 @@ def register():
 @app.route('/getAllRank',methods=['GET'])
 def getAllRank():
     #유저별 금액합계 조회 및 정렬 기능 구현
+    # MongoDB 집계 파이프라인
+    pipeline = [
+        {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
+        {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
+    ]
+    # 집계 실행
+    result = list(collection.aggregate(pipeline))
+    # 결과를 JSON 형식으로 반환?
+    return jsonify({'result': 'success', 'moneyRankList': result})
     return 0
 
 @app.route('/setMyCost')
@@ -81,6 +104,33 @@ def get_calendar():
 @app.route('/addCost',methods=['POST'])
 def addCost():
     #사용금액 등록 기능 구현
+    try:
+        # 클라이언트로부터 JSON 데이터 받기
+        userId_receive = request.form['userId_give']
+        userName_receive = request.form['userName_give']
+        date_receive = request.form['Date_give']
+        category_receive = request.form['Category_give']
+        cost_receive = request.form['Cost_give']
+        # 데이터 유효성 검사 (Id/Name/Date는 사용자가 입력하는게 아니기에 굳이 안해도되는가?)
+        if not (userId_receive and userName_receive and date_receive and category_receive and cost_receive):
+            return jsonify({"error": "필수 필드가 누락되었습니다."}), 400
+        # MongoDB에 데이터 삽입
+        data = {
+            'userId': userId_receive,
+            'userName': userName_receive,
+            'date': date_receive,
+            'category': category_receive,
+            'cost': cost_receive
+        }
+        result = collection.insert_one(data)
+        # 삽입 결과 응답
+        response = {
+            "message": "데이터가 성공적으로 삽입되었습니다.",
+            "inserted_id": str(result.inserted_id)
+        }
+        return jsonify(response), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     return 0
 
 @app.route('/editCost',methods=['POST'])
