@@ -19,6 +19,7 @@ app.config.update(
     JWT_SECTRET_KEY = "Secret Key"
 )
 
+user_id = 
 #JWT 확장 모듈을 flask 어플리케이션에 등록
 jwt = JWTManager(app)
 
@@ -52,6 +53,7 @@ def home():
 
 @app.route('/login',methods=['GET'])
 def login():
+
     return 0
 
 @app.route('/logout',methods=['GET'])
