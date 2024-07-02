@@ -1,9 +1,6 @@
-<<<<<<< Updated upstream
 import calendar
 from datetime import datetime
-=======
 import json
->>>>>>> Stashed changes
 from flask import Flask,render_template,jsonify,request
 from flask.json.provider import JSONProvider
 from bson import ObjectId
@@ -64,8 +61,12 @@ def getAllRank():
         {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
         {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
     ]
+    # 집계 실행
+    result = list(collection.aggregate(pipeline))
 
-<<<<<<< Updated upstream
+    # 결과를 JSON 형식으로 반환?
+    return jsonify({'result': 'success', 'moneyRankList': result})
+
 @app.route('/setMyCost')
 def myCalendar():
     today = datetime.today()
@@ -80,22 +81,12 @@ def myCalendar():
     print(month_name)
 
     return render_template('MoneyRankEditMode.html',month_name=month_name, year=year, month_days=month_days)
-
-
-
-@app.route('/addCost',methods=['POST'])
-=======
-    # 집계 실행
-    result = list(collection.aggregate(pipeline))
-
-    # 결과를 JSON 형식으로 반환?
-    return jsonify({'result': 'success', 'moneyRankList': result})
+    
 
 
 
 # 데이터 삽입을 처리하는 API 엔드포인트
 @app.route('/addCost', methods=['POST'])
->>>>>>> Stashed changes
 def addCost():
     try:
         # 클라이언트로부터 JSON 데이터 받기
@@ -138,18 +129,7 @@ def editCost():
 @app.route('/deleteCost',methods=['POST'])
 def deleteCost():
     #사용금액 삭제 기능 구현
-<<<<<<< Updated upstream
     return 0
 
 if __name__ == '__main__':
     app.run('0.0.0.0',port=5000,debug=True)
-=======
-    id = request.form['id']
-    collection.delete_one({'_id' : ObjectId(id)})
-    return jsonify({'result': 'success'})
-
-
-# EC2 업로드전 5000으로 수정 필요
-if __name__ == '__main__':
-   app.run('0.0.0.0',port=5001,debug=True)
->>>>>>> Stashed changes
