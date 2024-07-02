@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>일일소비| 정글 거지방</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+  <style>
+    .box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding: 1rem;
+    }
+    .button.is-light:hover {
+      background-color: #b5b5b5;
+    }
+    .button.is-danger {
+      background-color: #f14668;
+    }
+    .button.is-success {
+      background-color: #48c774;
+    }
+    .button.is-info {
+      background-color: #209cee;
+      color: white;
+    }
+    .control {
+      padding:0 4px;
+    }
+    .is-size-2 {
+      padding: 20px 0;
+    }
+</style>
+<script>
+  function toggleEditBox(elem) {
+
+            // elem이 속한 카드를 찾아서 edit-box와 shown-box를 토글하기
+            let card = $(elem).closest(".card");
+            let editBox = card.find(".edit-box");
+            let shownBox = card.find(".shown-box");
+
+            // id 값 edit-box의 display 값이 block 이면(= 눈에 보이면)
+            if ($(editBox).css("display") == "none") {
+                // edit-box를 가리고
+                $(shownBox).css('display', 'none');
+                $(editBox).css('display', 'block');
+            } else {
+                // 아니면(눈에 보이지 않으면) edit-box를 펴라
+                $(shownBox).css('display', 'block');
+                $(editBox).css('display', 'none');
+            }
+        }
+
+        function postMemos() {
+
+            let title = $("#post-title").val();
+            let comment = $("#post-comment").val();
+
+            if (title.trim() === "" || comment.trim() === "") {
+                alert("빈 칸을 모두 입력하세요!")
+                return;
+
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/memo",
+                    data: {
+                        title_give: title,
+                        comment_give: comment
+                    },
+                    success: function (response) {
+                        if (response["result"] == "success") {
+                            alert("포스팅 성공!");
+                            // 성공하면 페이지 새로고침하기
+                            window.location.reload();
+                        } else {
+                            alert("서버오류! 포스팅 실패")
+                        }
+                    }
+                })
+            }
+
+
+        }
+        
+        function showMemos() {
+            $.ajax({
+                type: "GET",
+                url: "/memo",
+                data: {},
+                success: function (response) {
+                    let memos = response["memos"];
+                    for (let i = 0; i < memos.length; i++) {
+                        makeCard(memos[i]["title"], memos[i]["comment"], memos[i]["likes"], memos[i]["_id"], memos[i]["display"]);
+                    }
+                }
+            })
+        }
+
+
+        function makeCard(thing, cost) {
+            let tempHtml = `
+              <div class="box">
+                <div>
+                  <span>식비</span> 
+                  <span>:</span>
+                  <span>원</span>
+                </div>
+                
+                <div>
+                  <button class="button is-danger" onclick="deleteMemos(this)">삭제</button>
+                  <button class="button is-success" onclick="editMemos(this)">수정</button>
+                </div>
+              </div>
+                `;
+            $("#add-box").before(tempHtml);
+
+        }
+
+        function editMemos(this) {
+            let box = $(elem).closest(".box");
+            let selectedThing = box.attr("#selected-thing");
+            let titleEdited = cardContainer.find("#edit-title").val();
+            let commentEdited = cardContainer.find("#edit-comment").val();
+
+
+            if (titleEdited.trim() === "" || commentEdited.trim === "") {
+                alert("빈 칸을 모두 입력하세요!")
+                return;
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/memo/edit",
+                    data: {
+                        id_give: selectedId,
+                        title_give: titleEdited,
+                        comment_give: commentEdited
+                    },
+                    success: function () {
+                        if (response["result"] == "success") {
+                            alert("수정 완료!");
+                            // 성공하면 페이지 새로고침하기
+                            window.location.reload();
+
+                            toggleEditBox(elem)
+                        } else {
+                            alert("서버 오류! 수정 실패!")
+                        }
+                    }
+                })
+            }
+
+        }
+
+        function deleteMemos(elem) {
+
+            let cardContainer = $(elem).closest(".col-md-4");
+            let selectedId = cardContainer.attr("id");
+
+            $.ajax({
+                type: "POST",
+                url: "/delete",
+                data: {
+                    id_give: selectedId
+                },
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        alert("삭제 완료!");
+                        // 성공하면 페이지 새로고침하기
+                        window.location.reload();
+                    } else {
+                        alert("서버오류! 삭제 실패!")
+                    }
+                }
+            })
+        }
+    </script>
+
+</head>
+
+<body>
+
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <div class="field">
+        <div class="control">
+          <button class="button is-light">돌아가기</button>
+        </div>
+      </div>
+
+      <div>
+        <h1 class="is-size-2">{{month}}월 {{day}}일</h1>
+      </div>
+
+      <!-- 붙을내용 -->
+
+
+      <div id="add-box" class="box">
+        <div class="field has-addons">
+          <p class="control">
+            <input id="post-title" class="input" type="text" placeholder="항목">
+          </p>
+          <p> : </p>
+          <p class="control">
+            <input id="post-cost" class="input" type="text" placeholder="금액">
+          </p>
+          <p class="control">
+            <span>원</span>
+          </p>
+        </div>
+        <button class="button is-info" onclick="postMemos()">추가</button>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

@@ -17,7 +17,6 @@
  
      <!-- 구글폰트 -->
      <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
-
     <title>가계부 랭킹</title>
 
     <!--style-->
@@ -120,6 +119,60 @@
     </style>
 
     <script>
+        //페이지가 완전히 로드되고 파싱된 후에 실행할 함수
+        document.addEventListener('DOMContentLoaded',function()
+        {
+            const monthElement = document.getElementById('month');
+            const datesElement = document.getElementById('dates');
+
+            var now = new Date();
+            let year = now.getFullYear();
+            let month = now.getMonth() + 1;
+
+            function updateCalendar(year,month)
+            {
+                fetch(`/get_calendar?year=${year}&month=${month}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        monthElement.textContent = `${data.month_name} ${data.year}`;
+                        datesElement.innerHTML = '';
+
+                        data.month_days.forEach(week => {
+                            week.forEach(day =>{
+                                const dateCell = document.createElement('div');
+                                dateCell.className = 'date';
+
+                                if(day != 0)
+                                {
+                                    dateCell.textContent = day;
+                                }
+                            datesElement.appendChild(dateCell);
+                        });
+                    });
+                });
+            }
+
+            document.querySelector('.prev').addEventListener('click',function(){
+                if(month ==1) {
+                    month = 12;
+                    year--;
+                } else {
+                    --month;
+                }
+                updateCalendar(year,month);
+            });
+
+            document.querySelector('.next').addEventListener('click',function(){
+                if(month ==12) {
+                    month = 1;
+                    year++;
+                } else {
+                    ++month;
+                }
+                updateCalendar(year,month);
+            })
+        }
+    )
         function Register()
         {
              location.href = 'MoneyRankRegisterForm.html';
@@ -130,10 +183,6 @@
             location.href = 'MoneyRankMain.html';
         }
 
-        function moveMonth(direction)
-        {
-            
-        }
     </script>
 
     </head>
@@ -141,9 +190,9 @@
     <div class="calendar-container">
         <div class="calendar">
             <div class="header">
-                <button onclick = "MoveMonth(-1)" id="previousMonth" class="nav-btn prev" aria-label="Previous Month">&lt;</button>
-                <div class="month">{{month_name}} 2024</div>
-                <button onclick = "MoveMonth(1)" id="nextMonth" class="nav-btn next" aria-label="Next Month">&gt;</button>
+                <button id="previousMonth" class="nav-btn prev" aria-label="Previous Month">&lt;</button>
+                <div class="month" id = "month">{{month_name}} {{year}}</div>
+                <button  id="nextMonth" class="nav-btn next" aria-label="Next Month">&gt;</button>
             </div>
             <div class="days">
                 <div class="day">일</div>
@@ -154,12 +203,12 @@
                 <div class="day">금</div>
                 <div class="day">토</div>
             </div>
-            <div class="dates">
+            <div class="dates" id="dates">
                 {% for week in month_days %}
                     {% for day in week %}
                         <div class = "date">
                             {% if day != 0 %}
-                                {{day}}
+                                {{day}}<br><br><small>0</small>
                             {% endif %}
                         </div>
                     {% endfor %}

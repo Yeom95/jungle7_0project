@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weekly Expenditure</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+  <style>
+    .box {
+      position: relative;
+      height: 100px;
+      margin-bottom: 1rem;
+      width: 100px;
+      text-align: center;
+      padding: 1rem;
+    }
+    .box .day {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 0.5rem;
+    }
+    .box .date {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0.5rem;
+    }
+    .box .data {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .button.is-light:hover {
+      background-color: #b5b5b5;
+    }
+    .section-title {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .is-centered {
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <div class="field">
+        <div class="control">
+          <button class="button is-light">돌아가기</button>
+        </div>
+      </div>
+
+      <h2 class="title is-4 section-title">이번 주 나의 지출은?</h2>
+      <div class="columns is-centered">
+        <div class="column is-narrow">
+          <div class="box">
+            <span class="day">일</span>
+            <span class="date">{{ date_sun }}</span>
+            <div class="data">{{ cost_sun }}</div>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <div class="box">
+            <span class="day">월</span>
+            <span class="date">{{ date_mon }}</span>
+            <div class="data">{{ cost_mon }}</div>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <div class="box">
+            <span class="day">화</span>
+            <span class="date">{{ date_tues }}</span>
+            <div class="data">{{ cost_tues }}</div>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <div class="box">
+            <span class="day">수</span>
+            <span class="date">{{ date_wed }}</span>
+            <div class="data">{{ cost_wed }}</div>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <div class="box">
+            <span class="day">목</span>
+            <span class="date">{{ date_thu }}</span>
+            <div class="data">{{ cost_thu }}</div>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <div class="box">
+            <span class="day">금</span>
+            <span class="date">{{ date_fri }}</span>
+            <div class="data">{{ cost_fri }}</div>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <div class="box">
+            <span class="day">토</span>
+            <span class="date">{{ cost_sat }}</span>
+            <div class="data">{{ cost_sat }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <p>- 총 금액: {{ total_amount }}원</p>
+        <p>- 오늘의 나의 순위: {{ today_rank }}위</p>
+        <p>- 이번 주의 나의 순위: {{ weekly_rank }}위</p>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
