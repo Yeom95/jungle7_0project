@@ -68,8 +68,8 @@
 
         function postMemos() {
 
-            let title = $("#post-title").val();
-            let comment = $("#post-comment").val();
+            let category = $("#post-title").val();
+            let cost = $("#post-comment").val();
 
             if (title.trim() === "" || comment.trim() === "") {
                 alert("빈 칸을 모두 입력하세요!")
@@ -80,8 +80,8 @@
                     type: "POST",
                     url: "/memo",
                     data: {
-                        title_give: title,
-                        comment_give: comment
+                        Category_give: category,
+                        Cost_give: cost
                     },
                     success: function (response) {
                         if (response["result"] == "success") {
