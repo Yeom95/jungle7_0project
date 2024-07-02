@@ -85,7 +85,7 @@ def register():
         return jsonify({"error": str(e)}), 500
 
 @app.route('/getUserRank',methods=['GET'])
-def getAllRank():
+def getUserRank():
 
     date = request.args.get('date')
     # 유저 아이디 입력
