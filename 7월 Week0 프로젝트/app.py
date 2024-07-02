@@ -7,6 +7,7 @@ from flask import Flask,render_template,jsonify,request
 from flask.json.provider import JSONProvider
 from flask_jwt_extended import *
 from bson import ObjectId
+from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
 from pymongo import MongoClient
@@ -14,6 +15,9 @@ from pymongo import MongoClient
 client = MongoClient('localhost',27017)
 db = client.dbjungle
 collection = db['moneyPlan']
+
+
+#userdata =sdfsdf
 
 #토큰 생성에 사용될 key를 flask 환경 변수에 등록
 app.config.update(
@@ -52,21 +56,34 @@ def get_month_days(year,month):
 
 @app.route('/')
 def home():
+
     return render_template('login.html')
 
-@app.route('/login',methods=['GET'])
+@app.route('/login',methods=['POST'])
 def login():
     #로그인 기능 구현
     #모든 id,pw값 불러옴
     result = list(collection.find({}))
 
     print(request.form['id_send'])
-    print(request.form['pw_send'])
-    
+
     user_id = request.form['id_send']
     user_pw = request.form['pw_send']
 
     for user in result:
+        # 아이디와 비밀번호가 일치하는 경우
+        if user_id == user['userId'] and check_password_hash(user['userPw'], user_pw):
+            payload = {
+                'id': user_id,
+                'exp': datetime.datetime.now() + datetime.timedelta(hours=24)  # 로그인 24시간 유지
+            }
+            token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+            return jsonify({'result': 'success', 'token': token})
+
+    # 아이디 또는 비밀번호가 일치하지 않는 경우
+    return jsonify({'result': '로그인 실패'})
+
+    '''for user in result:
         #아이디,비밀번호가 일치하지 않는 경우
         if(user_id != user['userId'] or user_pw != user['userPw']):
             return jsonify(result = "로그인 실패")
@@ -76,10 +93,14 @@ def login():
             payload = {
 			'id': user_id,
 			'exp': datetime.datetime.now() + datetime.timedelta(seconds=60)  # 로그인 24시간 유지
-		}
+            }
             token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+            return jsonify({'result': 'success', 'token': token})           
+            
 
-    return jsonify({'result': 'success', 'token': token})
+    return 0'''
+
+    
 
 @app.route('/logout',methods=['GET'])
 def logout():
