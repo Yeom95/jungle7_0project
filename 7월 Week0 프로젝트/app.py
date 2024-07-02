@@ -16,6 +16,7 @@ client = MongoClient('localhost',27017)
 db = client.dbjungle
 collection = db['moneyPlan']
 
+userID=''
 
 #userdata =sdfsdf
 
@@ -56,8 +57,24 @@ def get_month_days(year,month):
 
 @app.route('/')
 def home():
-
     return render_template('login.html')
+
+@app.route('/signUp')
+def signUp():
+    return render_template('signUp.html')
+
+@app.route('/dailySpending')
+def dailySpending():
+    return render_template('dailySpending.html')
+
+@app.route('/myPage')
+def myPage():
+    return render_template('myPage.html')
+
+@app.route('/rankingBoard')
+def rankingBoard():
+    return render_template('rankingBoard.html')
+
 
 @app.route('/login',methods=['POST'])
 def login():
@@ -69,6 +86,8 @@ def login():
 
     user_id = request.form['id_send']
     user_pw = request.form['pw_send']
+
+    userID = user_id
 
     for user in result:
         # 아이디와 비밀번호가 일치하는 경우
@@ -128,7 +147,7 @@ def register():
             "message": "데이터가 성공적으로 삽입되었습니다.",
             "inserted_id": str(result.inserted_id)
         }
-        return jsonify(response), 200
+        return jsonify({"result":'success'})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -196,9 +215,9 @@ def addCost():
     #사용금액 등록 기능 구현
     try:
         # 클라이언트로부터 JSON 데이터 받기
-        userId_receive = request.form['userId_give']
-        userName_receive = request.form['userName_give']
-        date_receive = request.form['Date_give']
+        userId_receive = userID
+        userName_receive = request.form['userName_give'] #id값으로 찾아서 저장하도록 수정
+        date_receive = request.form['Date_give']#API에서 dailySpending에 전달받은 Date값을 기반으로 형식에 맞게 전달
         category_receive = request.form['Category_give']
         cost_receive = request.form['Cost_give']
         # 데이터 유효성 검사 (Id/Name/Date는 사용자가 입력하는게 아니기에 굳이 안해도되는가?)
@@ -213,6 +232,7 @@ def addCost():
             'cost': cost_receive
         }
         result = collection.insert_one(data)
+        print(response["result"])
         # 삽입 결과 응답
         response = {
             "message": "데이터가 성공적으로 삽입되었습니다.",
