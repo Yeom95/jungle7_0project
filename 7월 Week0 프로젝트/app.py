@@ -1,12 +1,14 @@
 import calendar
 import json
-from datetime import datetime
+import datetime
+import jwt
+from datetime import timedelta
 from flask import Flask,render_template,jsonify,request
 from flask.json.provider import JSONProvider
 from flask_jwt_extended import *
 from bson import ObjectId
-app = Flask(__name__)
 
+app = Flask(__name__)
 from pymongo import MongoClient
 #client = MongoClient('mongodb://test:test@localhost',27017)
 client = MongoClient('localhost',27017)
@@ -20,7 +22,9 @@ app.config.update(
 )
 
 #JWT 확장 모듈을 flask 어플리케이션에 등록
-jwt = JWTManager(app)
+jwtModule = JWTManager(app)
+
+SECRET_KEY = "SecretKey"
 
 #유저별 주간,월간 금액합계 문제
 #날짜,요일 계산
@@ -48,11 +52,34 @@ def get_month_days(year,month):
 
 @app.route('/')
 def home():
-    return render_template('MoneyRank.html')
+    return render_template('login.html')
 
 @app.route('/login',methods=['GET'])
 def login():
-    return 0
+    #로그인 기능 구현
+    #모든 id,pw값 불러옴
+    result = list(collection.find({}))
+
+    print(request.form['id_send'])
+    print(request.form['pw_send'])
+    
+    user_id = request.form['id_send']
+    user_pw = request.form['pw_send']
+
+    for user in result:
+        #아이디,비밀번호가 일치하지 않는 경우
+        if(user_id != user['userId'] or user_pw != user['userPw']):
+            return jsonify(result = "로그인 실패")
+        #아이디,비밀번호가 일치하는 경우
+        #검증된 경우,access 토큰 반환
+        else: 
+            payload = {
+			'id': user_id,
+			'exp': datetime.datetime.now() + datetime.timedelta(seconds=60)  # 로그인 24시간 유지
+		}
+            token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+
+    return jsonify({'result': 'success', 'token': token})
 
 @app.route('/logout',methods=['GET'])
 def logout():
@@ -119,7 +146,6 @@ def getAllRank():
     result = list(collection.aggregate(pipeline))
     # 결과를 JSON 형식으로 반환?
     return jsonify({'result': 'success', 'moneyRankList': result})
-    return 0
 
 @app.route('/setMyCost')
 def myCalendar():
