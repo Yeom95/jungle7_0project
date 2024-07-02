@@ -54,13 +54,37 @@ def register():
     #회원가입 기능 구현
     return 0
 
-@app.route('/getAllRank',methods=['GET'])
+@app.route('/getUserRank',methods=['GET'])
 def getAllRank():
+
+    date = request.args.get('date')
+    # 유저 아이디 입력
+    userId_receive = request.form["userID_give"]
     # MongoDB 집계 파이프라인
     pipeline = [
+        {"$match": {"date": date}},  # date로 필터링
+        {"$group": {"_id": userId_receive, "total_cost": {"$sum": {"$toInt": "$cost"}}}},
+        {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
+    ]
+
+    # 집계 실행
+    result = list(collection.aggregate(pipeline))
+
+    # 결과를 JSON 형식으로 반환?
+    return jsonify({'result': 'success', 'moneyRankList': result})
+
+@app.route('/getAllRank',methods=['GET'])
+def getAllRank():
+
+    date = request.args.get('date')
+    
+    # MongoDB 집계 파이프라인
+    pipeline = [
+        {"$match": {"date": date}},  # date로 필터링
         {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
         {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
     ]
+
     # 집계 실행
     result = list(collection.aggregate(pipeline))
 
@@ -123,13 +147,33 @@ def addCost():
 
 @app.route('/editCost',methods=['POST'])
 def editCost():
-    #사용금액 수정 기능 구현
-    return 0
+    try:
+        id = request.form['id']
+        category = request.form['category']
+        money = request.form['money']
+
+        # MongoDB에서 해당 문서 업데이트
+        result = db.moneyPlan.update_one(
+            {"_id": ObjectId(id)},
+            {"$set": {"category": category, "money": money}}
+        )
+
+        if result.modified_count > 0:
+            return jsonify({"result": "success", "message": "사용금액이 수정되었습니다."}), 200
+        else:
+            return jsonify({"result": "fail", "message": "해당 ID를 가진 문서가 없습니다."}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/deleteCost',methods=['POST'])
 def deleteCost():
     #사용금액 삭제 기능 구현
-    return 0
+    id = request.form['id']
+    db.moneyPlan.delete_one({'_id': ObjectId(id)})
+    return jsonify({'result': 'success'})
 
+#5000으로 수정 필요
 if __name__ == '__main__':
-    app.run('0.0.0.0',port=5000,debug=True)
+    app.run('0.0.0.0',port=5001,debug=True)
