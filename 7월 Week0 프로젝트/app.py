@@ -104,6 +104,13 @@ def signUp():
 def dailySpendingPage():
     costDate = request.args.get('costDate')
     thisYear,thisMonth,thisDay = slice_stringDate(costDate)
+
+
+    return render_template('dailySpending.html',month=thisMonth,day=thisDay, date=costDate)
+
+@app.route('/dailySpendingBox',methods=['GET'])
+def dailySpendingBox():
+    costDate = request.args.get('costDate')
     costDateTime = get_week_byStr(costDate)
 
     pipeline = [
@@ -121,8 +128,38 @@ def dailySpendingPage():
 
     results = list(collection.aggregate(pipeline))
 
+    return jsonify({'result':'success','costList':results})
 
-    return render_template('dailySpending.html', costMember = results,month=thisMonth,day=thisDay, user=userID)
+@app.route('/dailySpendingBox',methods=['POST'])
+def dailySpendingBoxPost():
+    costDate = request.form['post_costDate']
+    category = int(request.form['post_category'])
+    cost = int(request.form['post_cost'])
+
+    post_cost_data = {'userId':userID,'category':category,'cost':cost,'date':costDate}
+
+    collection.insert_one(post_cost_data)
+
+    return jsonify({'result':'success','msg':'POST 연결'})
+
+@app.route('/dailySpendingBoxDelete',methods=['POST'])
+def dailySpendingBoxDelete():
+    costDate = request.form['delete_costDate']
+    category = int(request.form['delete_category'])
+    cost = int(request.form['delete_cost'])
+
+    delete_conditions = {
+        "$and": [
+            {"userId":userID},
+            {"category":category},
+            {"cost":cost},
+            {"date":costDate}
+        ]
+    }
+
+    collection.delete_one(delete_conditions)
+
+    return jsonify({'result':'success','msg':'POST 연결'})
 
 @app.route('/myPage')
 def myPage(): 
