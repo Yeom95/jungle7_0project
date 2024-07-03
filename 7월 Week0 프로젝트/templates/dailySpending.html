@@ -173,6 +173,53 @@
             })
 
         }
+
+        function postBox(){
+          let postDate = '{{date}}'
+          let category = $("#post-add-category").val().trim();
+          let cost = $("#post-add-cost").val().trim();
+          let errorMessage = $("#error-message");
+
+          // 정규식: 글자만, 숫자만 확인
+          let regexCategory = /^[a-zA-Z가-힣\s]+$/;
+          let regexCost = /^[0-9]+$/;
+
+          if (!category || !cost) {
+            errorMessage.text("양식을 모두 채워주세요").show();
+            return;
+          }
+
+          if (!regexCategory.test(category)) {
+            errorMessage.text("입력 양식이 잘못되었습니다: 항목에는 글자만 입력하세요").show();
+            return;
+          }
+
+          if (!regexCost.test(cost)) {
+            errorMessage.text("입력 양식이 잘못되었습니다: 금액에는 숫자만 입력하세요").show();
+            return;
+          }
+
+          errorMessage.hide(); // 오류 메시지를 숨김
+
+          $.ajax({
+            type: "POST",
+            url: "/dailySpendingBox",
+            data: { post_costDate: postDate, post_category: category, post_cost: cost },
+            success: function(response) {
+              if (response["result"] == "success") {
+                window.location.reload();
+              } else {
+                errorMessage.text("서버 응답 오류: 다시 시도해주세요").show();
+              }
+            },
+            error: function() {
+              errorMessage.text("서버 오류: 다시 시도해주세요").show();
+            }
+          });
+        }
+
+
+
     </script>
 
 </head>
@@ -249,6 +296,8 @@
             </p>
           </div>
           <button id="addBtn" class="button is-info" onclick="postBox()">추가</button>
+          <div id="error-message" class="notification is-danger" style="display: none;"></div>
+
         </div>
     </div>
   </section>
