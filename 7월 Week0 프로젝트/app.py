@@ -257,8 +257,8 @@ def register():
         userId_receive = request.form['userId_give']
         userPw_receive = hashed_password
         userName_receive = request.form['userName_give']
-        category_receive = request.form['Category_give']
-        cost_receive = request.form['Cost_give']
+        category_receive = 0
+        cost_receive = 0
         
         # MongoDB에 데이터 삽입
         data = {
