@@ -414,8 +414,23 @@ def getAllRank():
 
     # 집계 실행
     result = list(collection.aggregate(pipeline))
+
+    current_date = datetime.datetime.now()
+    formatted_date = current_date.strftime("%Y%m%d")  # 오늘 날짜를 형식화
+
+    pipeline3 = [
+        {"$match": {"date": formatted_date}},  # date로 필터링
+        {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
+        {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
+    ]
+
+    dayrank = list(collection.aggregate(pipeline3))
+
+    labels = [item['_id'] for item in dayrank]
+    ratios = [item['total_cost'] for item in dayrank]
+
     # 결과를 JSON 형식으로 반환?
-    return jsonify({'result': 'success', 'moneyRankList': result})
+    return jsonify({'result': 'success', 'moneyRankList': result, "labels": labels, "ratios": ratios})
 
 @app.route('/setMyCost')
 def myCalendar():
@@ -501,6 +516,24 @@ def deleteCost():
     id = request.form['id']
     db.moneyPlan.delete_one({'_id': ObjectId(id)})
     return jsonify({'result': 'success'})
+
+@app.route('/get-data', methods=['GET'])
+def get_data():
+    current_date = datetime.datetime.now()
+    formatted_date = current_date.strftime("%Y%m%d")  # 오늘 날짜를 형식화
+
+    pipeline3 = [
+        {"$match": {"date": formatted_date}},  # date로 필터링
+        {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
+        {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
+    ]
+
+    dayrank = list(collection.aggregate(pipeline3))
+
+    labels = [item['_id'] for item in dayrank]
+    ratios = [item['total_cost'] for item in dayrank]
+
+    return jsonify({"labels": labels, "ratios": ratios})
 
 #5000으로 수정 필요
 if __name__ == '__main__':
