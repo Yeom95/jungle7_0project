@@ -249,7 +249,7 @@ def logout():
 @app.route('/register',methods=['POST'])
 def register():
     try:
-        hashed_password = generate_password_hash(request.form['userPw_give'])
+        hashed_password = generate_password_hash(request.form['userPw_give'], method='pbkdf2')
 
         print(hashed_password)
 
