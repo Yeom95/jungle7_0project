@@ -48,6 +48,20 @@
       })
     }
   </script>
+  <style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      
+      section {
+        width: 640px;
+        height: 514px;
+      }
+  </style>
 
 </head>
 
@@ -61,7 +75,7 @@
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <input class="input" type="text" id="name" placeholder="Enter your name">
+              <input class="input" type="text" id="name">
             </div>
           </div>
         </div>
@@ -74,7 +88,7 @@
         <div class="field-body">
           <div class="field has-addons">
             <div class="control is-expanded">
-              <input class="input" type="text" id="id" placeholder="Enter your ID">
+              <input class="input" type="text" id="id">
             </div>
             <div class="control">
               <button onclick="doubleCheck()"class="button is-info">중복확인</button>
@@ -90,7 +104,7 @@
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <input class="input" type="password" id="password" placeholder="Enter your Password">
+              <input class="input" type="password" id="password" >
             </div>
           </div>
         </div>
