@@ -28,7 +28,7 @@
     <script>
       function userLogin(){
         $.ajax({
-          type:"GET",
+          type:"POST",
           url:"/login",
           data:{
             id_send:$("#id").val(),
@@ -71,7 +71,7 @@
   
         <div class="field is-grouped">
           <div class="control">
-            <button class="button is-link">회원가입</button>
+            <button class="button is-link" onClick="location.href='/signUp'">회원가입</button>
           </div>
           <div class="control">
             <button onclick="userLogin()" id="loginButton" class="button is-primary">로그인</button>

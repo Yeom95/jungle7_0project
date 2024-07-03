@@ -5,7 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Form Layout</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+  <script>
+    function registerMember()
+    {
+      $.ajax({
+          type:"POST",
+          url:"/register",
+          data:{
+            userId_give:$("#id").val(),
+            userPw_give:$("#password").val(),
+            userName_give:$("#name").val(),
+          },
+          success:function(response){
+            if(response["result"] == "success"){
+                        alert("변경 성공!");
+                        window.location.reload();
+                    }
+                    else{
+                        alert("서버 오류!")
+                    }
+            
+          }
+      })
+    }
+  </script>
+
 </head>
+
 <body>
   <section class="section">
     <div class="container">
@@ -56,7 +84,7 @@
           <button class="button is-light">취소</button>
         </div>
         <div class="control">
-          <button class="button is-primary">회원가입</button>
+          <button onclick="registerMember()" class="button is-primary">회원가입</button>
         </div>
       </div>
     </div>

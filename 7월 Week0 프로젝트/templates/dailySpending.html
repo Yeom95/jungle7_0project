@@ -47,7 +47,7 @@
     }
 </style>
 <script>
-  function toggleEditBox(elem) {
+        function toggleEditBox(elem) {
 
             // elem이 속한 카드를 찾아서 edit-box와 shown-box를 토글하기
             let memo = $(elem).closest(".shown-box");
@@ -196,7 +196,7 @@
       </div>
 
       <!-- 눈에 안보이는 박스 -->
-      <div class="box edit-box" style="display:non">
+      <div class="box edit-box" style="display:none">
         <div class="field has-addons">
           <p class="control">
             <input id="post-title" class="input" type="text" value="${thing}">
