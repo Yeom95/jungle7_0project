@@ -102,8 +102,6 @@
             <div class="columns is-mobile is-justify-content-flex-end">
               <div class="column"><button onClick="location.href='/'" class=" is-narrow button is-light subtitle">로그아웃</button></div>
               <div class="column"><button onClick="location.href='/myPage'" class="column button is-warning subtitle is-narrow">my page</button></div>
-              <div class="column"><button href="./beggerKing" class="column button is-warning subtitle is-narrow">오늘의 거지왕</button></div>
-                
             </div>
             <h1 class="title is-1">Ranking Board</h1>
             <section class="section">
@@ -278,7 +276,7 @@
 
       <!-- 차트 추가 -->
       <div id="chartContainer">
-        <canvas id="myPolarAreaChart"></canvas>
+        <canvas id="myPolarAreaChart" width="400" height="400"></canvas>
         <script>
           async function fetchData() {
             const response = await fetch('/getAllRank');
