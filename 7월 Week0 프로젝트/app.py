@@ -134,7 +134,7 @@ def dailySpendingBox():
 @app.route('/dailySpendingBox',methods=['POST'])
 def dailySpendingBoxPost():
     costDate = request.form['post_costDate']
-    category = int(request.form['post_category'])
+    category = request.form['post_category']
     cost = int(request.form['post_cost'])
 
     post_cost_data = {'userId':userID,'category':category,'cost':cost,'date':costDate}
