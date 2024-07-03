@@ -90,13 +90,13 @@
                 success:function(response){
                     let costList = response["costList"];
                     for(let i=0;i<costList.length;i++){
-                        makeBox(costList[i]["category"],costList[i]["cost"],i)
+                        makeBox(costList[i]["_id"],costList[i]["category"],costList[i]["cost"],i)
                     }
                 }
             })
         }
 
-        function makeBox(thing, cost,num) {
+        function makeBox(id,thing, cost,num) {
           let temp_html = `
               <div class="box shown-box">
             <div>
@@ -106,7 +106,7 @@
             </div>
        
               <div>
-                <button id="deleteBtn${num}" class="button is-danger" onclick="deleteBox(${thing},${cost},${num})">삭제</button>
+                <button id="deleteBtn${num}" class="button is-danger" onclick="deleteBox('${id}',${thing},${cost},${num})">삭제</button>
                 <button id="editBtn${num}" class="button is-success" onclick="editData(${thing},${cost},${num})">수정</button>
               </div>
           </div>
@@ -134,7 +134,8 @@
 
         }
 
-        function deleteBox(thing,cost,num){
+        function deleteBox(id,thing,cost,num){
+            let ID = id
             let deleteDate = '{{date}}'
             //정규식을 통해 숫자 외에는 공백으로 만듬
             let category = $("#deleteCategory"+num.toString()).text();
@@ -143,7 +144,7 @@
             $.ajax({
                 type:"POST",
                 url:"/dailySpendingBoxDelete",
-                data:{delete_costDate:deleteDate,delete_category:category,delete_cost:deleteCost},
+                data:{delete_ID:ID},
                 success:function(response){
                     if(response["result"] == "success"){
                         window.location.reload();
@@ -152,7 +153,7 @@
             })
         }
 
-        function editBox(id){
+        function editBox(id,thing,cost,num){
             let title = $(".new-title").val();
             let text = $(".new-text").val();
 

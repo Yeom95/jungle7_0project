@@ -9,6 +9,7 @@ from flask_jwt_extended import *
 from bson import ObjectId
 from werkzeug.security import generate_password_hash,check_password_hash
 from math import ceil
+import uuid
 
 app = Flask(__name__)
 from pymongo import MongoClient
@@ -120,7 +121,7 @@ def dailySpendingBox():
         }},
         {"$match":{"convertedDate":costDateTime}},
         {"$project": {
-        "_id": 0,
+        "_id": 1,
         "category": 1,
         "cost": 1
     }}
@@ -144,7 +145,8 @@ def dailySpendingBoxPost():
 
 @app.route('/dailySpendingBoxDelete',methods=['POST'])
 def dailySpendingBoxDelete():
-    costDate = request.form['delete_costDate']
+    costID = request.form['delete_ID']
+    '''costDate = request.form['delete_costDate']
     category = int(request.form['delete_category'])
     cost = int(request.form['delete_cost'])
 
@@ -155,9 +157,9 @@ def dailySpendingBoxDelete():
             {"cost":cost},
             {"date":costDate}
         ]
-    }
+    }'''
 
-    collection.delete_one(delete_conditions)
+    collection.delete_one({'_id':ObjectId(costID)})
 
     return jsonify({'result':'success','msg':'POST 연결'})
 
@@ -353,14 +355,13 @@ def register():
     try:
         hashed_password = generate_password_hash(request.form['userPw_give'], method='pbkdf2')
 
-        print(hashed_password)
-
         # 클라이언트로부터 JSON 데이터 받기
         userId_receive = request.form['userId_give']
         userPw_receive = hashed_password
         userName_receive = request.form['userName_give']
         category_receive = 0
         cost_receive = 0
+        user_UUID = str(uuid.uuid4())
         
         # MongoDB에 데이터 삽입
         data = {
@@ -368,7 +369,8 @@ def register():
             'userPw': userPw_receive,
             'userName': userName_receive,
             'category': category_receive,
-            'cost' : cost_receive
+            'cost' : cost_receive,
+            'UUID' : user_UUID
         }
             
         result = collection.insert_one(data)
@@ -380,6 +382,7 @@ def register():
         return jsonify({"result":'success'})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/getUserRank',methods=['GET'])
 def getUserRank():
