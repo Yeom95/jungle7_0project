@@ -163,6 +163,16 @@ def dailySpendingBoxDelete():
 
     return jsonify({'result':'success','msg':'POST 연결'})
 
+@app.route('/dailySpendingBoxEdit',methods=['POST'])
+def dailySpendingBoxEdit():
+    editID = request.form['edit_ID']
+    editCategory = int(request.form['edit_category'])
+    editCost = int(request.form['edit_cost'])
+
+    collection.update_one({'_id':ObjectId(editID)},{'$set':{'category':editCategory,'cost':editCost}})
+
+    return jsonify({'result':'success','msg':'POST 연결'})
+
 @app.route('/myPage')
 def myPage(): 
     current_date = datetime.datetime.now()
