@@ -77,6 +77,11 @@
 
   <!-- 창 사이즈에 따라 클래스 추가 및 삭제  -->
   <script>
+  function moveDailySpending(date)
+  {
+      window.location.href = `/dailySpending?costDate=${date}`;
+  }
+
   $(window).resize(function() {
         if($(window).width() < 1000) {
             $(".data").removeClass('is-4');

@@ -47,7 +47,7 @@
     }
 </style>
 <script>
-        function toggleEditBox(elem) {
+        function deleteData(elem) {
 
             // elem이 속한 카드를 찾아서 edit-box와 shown-box를 토글하기
             let memo = $(elem).closest(".shown-box");
@@ -115,27 +115,31 @@
 
         function makeCard(thing, cost) {
             let tempHtml = `
-            <div class="box shown-box">
+            {% for member in costMember %}
+              <div class="box shown-box">
+        
               <div>
-                <span>${thing}</span> 
+                <span>{{ member.category }}</span>
                 <span>:</span>
-                <span>${cost}원</span>
+                <span>{{ member.cost }}원</span>
               </div>
+   
               <div>
-                <button class="button is-danger" onclick="deleteMemos(this)">삭제</button>
-                <button class="button is-success" onclick="toggleEditBox(this)">수정</button>
+                <button class="button is-danger" onclick="deleteData(this)">삭제</button>
+                <button class="button is-success" onclick="editData(this)">수정</button>
               </div>
-            </div>
+              </div>
+      {% endfor %}
 
       <!-- 눈에 안보이는 박스 -->
             <div class="box edit-box" style="display:none">
               <div class="field has-addons">
                 <p class="control">
-                  <input id="post-title" class="input" type="text" value="${thing}">
+                  <input id="post-title" class="input" type="text" value="">
                 </p>
                 <p> : </p>
                 <p class="control">
-                  <input id="post-cost" class="input" type="text" value="${cost}">
+                  <input id="post-cost" class="input" type="text" value="">
                 </p>
                 <p class="control">
                   <span>원</span>
@@ -149,17 +153,6 @@
             $("#add-box").before(tempHtml);
 
         }
-
-        function editMemos(this) {
-
-        }
-
-        function deleteMemos(elem) {
-
-           
-        }
-
-        function saveMemos(this) {}
     </script>
 
 </head>
@@ -172,7 +165,7 @@
     <div class="container">
       <div class="field">
         <div class="control">
-          <button class="button is-light">돌아가기</button>
+          <button onClick="location.href='/myPage'" class="button is-light">돌아가기</button>
         </div>
       </div>
 
@@ -185,7 +178,6 @@
        <!-- 눈에 보이는 박스   -->
        {% for member in costMember %}
       <div class="box shown-box">
-        
         <div>
             <span>{{ member.category }}</span>
             <span>:</span>
@@ -193,8 +185,8 @@
         </div>
    
           <div>
-            <button class="button is-danger" onclick="deleteMemos(this)">삭제</button>
-            <button class="button is-success" onclick="toggleEditBox(this)">수정</button>
+            <button id="deleteBtn" class="button is-danger" onclick="deleteData(this)">삭제</button>
+            <button id="editBtn" class="button is-success" onclick="editData(this)">수정</button>
           </div>
       </div>
       {% endfor %}
@@ -203,11 +195,11 @@
       <div class="box edit-box" style="display:none">
         <div class="field has-addons">
           <p class="control">
-            <input id="post-title" class="input" type="text" value="${thing}">
+            <input id="post-title" class="input" type="text" value="">
           </p>
           <p> : </p>
           <p class="control">
-            <input id="post-cost" class="input" type="text" value="${cost}">
+            <input id="post-cost" class="input" type="text" value="">
           </p>
           <p class="control">
             <span>원</span>
@@ -215,7 +207,7 @@
         </div>
         
         <div>
-          <button class="button is-warning" onclick="editMemos(this)">저장</button>
+          <button id="saveBtn" class="button is-warning" onclick="saveData(this)">저장</button>
         </div>
       </div>
 
@@ -232,7 +224,7 @@
             <span>원</span>
           </p>
         </div>
-        <button class="button is-info" onclick="postMemos()">추가</button>
+        <button id="addBtn" class="button is-info" onclick="addData()">추가</button>
       </div>
     </div>
   </section>
