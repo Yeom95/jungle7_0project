@@ -61,7 +61,27 @@
       
             <h2 class="title is-4 section-title">오늘의 절약왕</h2>
             <div class="columns">
-              <div class="column">
+              {% for i in range(3) %}
+              <div class="box">
+                <p>{{ i + 1 }}위</p>
+                <p>
+                  {% if savedayrank|length > i %}
+                    {{ savedayrank[i]['_id'] }}
+                  {% else %}
+                    &nbsp;
+                  {% endif %}
+                </p>
+                <p>
+                  {% if savedayrank|length > i %}
+                    {{ savedayrank[i]['total_cost'] }}
+                  {% else %}
+                    &nbsp;
+                  {% endif %}
+                </p>
+              </div>
+            {% endfor %}
+
+              <!--{#<div class="column">
                 <div class="box">
                   <p>1위</p>
                   <p>
@@ -88,14 +108,33 @@
                     <p>
                       0</p>
                 </div>
-              </div>
+              </div>#}-->
             </div>
       
             <hr>
       
             <h2 class="title is-4 section-title">이 주의 절약왕</h2>
             <div class="columns">
-              <div class="column">
+              {% for i in range(3) %}
+              <div class="box">
+                <p>{{ i + 1 }}위</p>
+                <p>
+                  {% if saveweekrank|length > i %}
+                    {{ saveweekrank[i]['_id'] }}
+                  {% else %}
+                    &nbsp;
+                  {% endif %}
+                </p>
+                <p>
+                  {% if saveweekrank|length > i %}
+                    {{ saveweekrank[i]['total_cost'] }}
+                  {% else %}
+                    &nbsp;
+                  {% endif %}
+                </p>
+              </div>
+            {% endfor %}
+              <!--{#<div class="column">
                 <div class="box">
                   <p>1위</p>
                   <p>{{saveweekrank[0]['_id']}}</p>
@@ -118,7 +157,7 @@
                   <p>3위</p>
                   <p>ㅇㅇㅇ</p>
                 </div>
-              </div>
+              </div>#}-->
             </div>
           </div>
         </section>
