@@ -138,30 +138,11 @@ def myPage():
 
 @app.route('/rankingBoard')
 def rankingBoard():
-    date = request.args.get('date')
-
-    weekCount = week_of_month(datetime.datetime.now(),)
-    
-    # MongoDB 집계 파이프라인
-    '''pipeline = [
-        {"$match": {"date": date}},  # date로 필터링
-        {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
-        {"$match": {"total_cost": {"$gte": 1}}},
-        {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
-    ]'''
 
     current_date = datetime.datetime.now()
+    formatted_date = current_date.strftime("%Y%m%d")
 
-    '''pipeline = [
-    # 시스템 날짜의 ISO 주(week)를 계산하여 해당 주와 일치하는지 확인
-    {"$addFields": {
-        "convertedDate": {"$dateFromString": {"dateString": "$date", "format": "%Y%m%d"}}
-    }},
-    {"$match": {"$expr": {"$eq": [{"$isoWeek": "$convertedDate"}, {"$isoWeek": {"dateFromString": {"dateString": current_date}}}]}}},
-    {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
-    {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
-    ]'''
-
+    # 당일 랭크 조회 mongoDB 집계 파이프라인 
     pipeline = [
     # 저장된 날짜 문자열을 날짜 객체로 변환
     {"$addFields": {
@@ -175,24 +156,24 @@ def rankingBoard():
     # ISO 주가 현재 ISO 주와 일치하는 문서를 찾기
     {"$match": {"$expr": {"$eq": ["$isoWeekConvertedDate", "$isoWeekCurrentDate"]}}},
     # userId로 문서를 그룹화하고 cost를 합산
-    {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}},"dates":{"$push":"$date"}}},
+    {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
     # total_cost 기준으로 오름차순 정렬
     {"$sort": {"total_cost": 1}}
 ]
 
+    # 주간 랭크 집계 실행
+    weekRank = list(collection.aggregate(pipeline))
 
-    # 집계 실행
-    result = list(collection.aggregate(pipeline))
+    # 당일 랭크 조회 mongoDB 집계 파이프라인 
+    pipeline2 = [
+    {"$match": {"date" : formatted_date}},  # date로 필터링
+    {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
+    {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
+]
+    
+    dayrank = list(collection.aggregate(pipeline2))
 
-
-    dayrank = []
-
-    for data in result:
-        for date in data['dates']:
-            if(get_week_byStr(date).weekday() == datetime.datetime.now().weekday()):
-                dayrank.append(data)
-
-    return render_template('rankingBoard.html',saveweekrank=result,savedayrank=dayrank)
+    return render_template('rankingBoard.html',saveweekrank=weekRank,savedayrank=dayrank)
 
 
 @app.route('/login',methods=['POST'])
