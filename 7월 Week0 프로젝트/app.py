@@ -13,7 +13,7 @@ import uuid
 
 app = Flask(__name__)
 from pymongo import MongoClient
-#client = MongoClient('mongodb://test:test@localhost',27017)
+
 client = MongoClient('localhost',27017)
 db = client.dbjungle
 collection = db['moneyPlan']
@@ -101,15 +101,18 @@ def home():
 def signUp():
     return render_template('signUp.html')
 
-@app.route('/doubleCheck',methods=['POST'])
+@app.route('/doubleCheck', methods=['POST'])
 def doubleCheck():
     checkID = request.form['userID']
 
-    if(collection.find({'userId':checkID})):
+    # userId가 checkID와 일치하는 문서를 찾기
+    count = collection.count_documents({'userId': checkID})
+    
+    # 일치하는 문서가 있으면 중복으로 처리
+    if count > 0:
         return jsonify({"error": "error"})
     else:
-        return jsonify({'result':'success'})
-    
+        return jsonify({'result': 'success'})
 
 
 

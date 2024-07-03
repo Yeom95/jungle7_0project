@@ -20,8 +20,8 @@
           },
           success:function(response){
             if(response["result"] == "success"){
-                        alert("변경 성공!");
-                        window.location.reload();
+                        alert("가입 성공!");
+                        location.href = "/";
                     }
                     else{
                         alert("서버 오류!")
