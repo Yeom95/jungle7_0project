@@ -55,9 +55,9 @@
             showCostList();
         })
 
-        function changeEditMode(){
-            $("#display-card").hide();
-            $("#edit-card").show();
+        function changeEditMode(num){
+            $("#shownBox"+num.toString()).hide();
+            $("#editBox"+num.toString()).show();
         }
 
         function saveMemo(){
@@ -98,7 +98,7 @@
 
         function makeBox(id,thing, cost,num) {
           let temp_html = `
-              <div class="box shown-box">
+          <div id=shownBox${num} class="box shown-box">
             <div>
                 <span id="deleteCategory${num}">${thing}</span>
                 <span>:</span>
@@ -107,19 +107,19 @@
        
               <div>
                 <button id="deleteBtn${num}" class="button is-danger" onclick="deleteBox('${id}',${thing},${cost},${num})">삭제</button>
-                <button id="editBtn${num}" class="button is-success" onclick="editData(${thing},${cost},${num})">수정</button>
+                <button id="editBtn${num}" class="button is-success" onclick="changeEditMode(${num})">수정</button>
               </div>
           </div>
 
             <!-- 눈에 안보이는 박스 -->
-            <div class="box edit-box" style="display:none">
+            <div id=editBox${num} class="box edit-box" style="display:none">
               <div class="field has-addons">
                 <p class="control">
-                  <input id="post-title" class="input" type="text" value="">
+                  <input id="editCategory${num}" class="input" type="text" value="">
                 </p>
                 <p> : </p>
                 <p class="control">
-                  <input id="post-cost" class="input" type="text" value="">
+                  <input id="editCost${num}" class="input" type="text" value="">
                 </p>
                 <p class="control">
                   <span>원</span>
@@ -127,7 +127,7 @@
               </div>
               
               <div>
-                <button class="button is-warning" onclick="editMemos(this)">저장</button>
+                <button class="button is-warning" onclick="editBox('${id}',${thing},${cost},${num})">저장</button>
               </div>
             </div>`;
           $("#box-list").append(temp_html);
@@ -154,23 +154,18 @@
         }
 
         function editBox(id,thing,cost,num){
-            let title = $(".new-title").val();
-            let text = $(".new-text").val();
+          let ID = id
+            //정규식을 통해 숫자 외에는 공백으로 만듬
+            let category = $("#editCategory"+num.toString()).val();
+            let editCost = $("#editCost"+num.toString()).val();
 
-            title = String(title)
-            text = String(text)
-            
             $.ajax({
                 type:"POST",
-                url:"/edit",
-                data:{id_give:id,title_give:title,text_give:text},
+                url:"/dailySpendingBoxEdit",
+                data:{edit_ID:ID,edit_category:category,edit_cost:editCost},
                 success:function(response){
                     if(response["result"] == "success"){
-                        alert("변경 성공!");
                         window.location.reload();
-                    }
-                    else{
-                        alert("서버 오류!")
                     }
                 }
             })
