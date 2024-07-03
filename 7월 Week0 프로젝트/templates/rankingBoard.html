@@ -59,15 +59,8 @@
     }
 
     #chartContainer {
-      width: 100%;
-      max-width: 1000px;
-      /* 최대 너비 설정 */
-      height: auto;
-    }
-
-    canvas {
-      width: 100% !important;
-      height: auto !important;
+            width: 00px;  /* 원하는 차트 너비 */
+            height: 200px;  /* 원하는 차트 높이 */
     }
   </style>
 
@@ -174,39 +167,8 @@
               </div>#}-->
     </div>
 
-    <
-
-
-
-    <!-- 추후에 지울 수 있음 -->
-    <!-- 4위부터 6위까지 -->
-    {% for i in range(3, 6) %}
-    <div class="box">
-      <div class="columns is-mobile">
-        <div class="column is-1">
-          <div class="title">{{ i + 1 }}</div>
-        </div>
-        <div class="column is-3">
-          {% if savedayrank|length > i %}
-          {{ savedayrank[i]['_id'] }}
-          {% else %}
-          &nbsp;
-          {% endif %}
-        </div>
-        <div class="column is-1">
-          {% if savedayrank|length > i %}
-          {{ savedayrank[i]['total_cost'] }}
-          {% else %}
-          &nbsp;
-          {% endif %}
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-
     <div id="chartContainer">
       <canvas id="myPolarAreaChart"></canvas>
-
       <script>
         async function fetchData() {
           const response = await fetch('/getAllRank');
@@ -260,6 +222,32 @@
       </script>
     </div>
 
+
+    <!-- 추후에 지울 수 있음 -->
+    <!-- 4위부터 6위까지 -->
+    {% for i in range(3, 6) %}
+    <div class="box">
+      <div class="columns is-mobile">
+        <div class="column is-1">
+          <div class="title">{{ i + 1 }}</div>
+        </div>
+        <div class="column is-3">
+          {% if savedayrank|length > i %}
+          {{ savedayrank[i]['_id'] }}
+          {% else %}
+          &nbsp;
+          {% endif %}
+        </div>
+        <div class="column is-1">
+          {% if savedayrank|length > i %}
+          {{ savedayrank[i]['total_cost'] }}
+          {% else %}
+          &nbsp;
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
     <!--{#<div class="column">
                 <div class="box">
                   <p>1위</p>
@@ -408,7 +396,7 @@
                   <p>ㅇㅇㅇ</p>
                 </div>
               </div>#}-->
-  </section><!--  -->
+  </section>
 
 
 
