@@ -57,6 +57,11 @@
     .column.is-3 {
       flex-grow: 3;
     }
+    .center-div{
+      text-align: center;
+      height:100%;
+    }
+    </style>
 
     #chartContainer {
             width: 00px;  /* 원하는 차트 너비 */
@@ -77,71 +82,69 @@
         }
       });
     }
-  </script>
+    </script>
 
-</head>
-
-<body>
-  <section class="section">
-    <div class="container">
-      <div class="columns is-justify-content-space-between">
-        <div class="column is-narrow">
-          <button onClick="location.href='/'" class="button is-light">로그 아웃</button>
-        </div>
-        <div class="column is-narrow">
-          <button onClick="location.href='/myPage'" class="button is-warning">my page</button>
-        </div>
-      </div>
-      <h1 class="title is-1">Ranking Board</h1>
-      <section class="section">
-        <h2 class="title is-4 section-title">오늘의 절약왕</h2>
+    </head>
+    <body>
+        <section class="section">
+            <div class="columns is-justify-content-flex-end">
+              <div class="column is-narrow">
+                <button onClick="location.href='/'" class="button is-light subtitle">로그아웃</button>
+              </div>
+              <div class="column is-narrow">
+                <button onClick="location.href='/myPage'" class="button is-warning subtitle">my page</button>
+              </div>
+            </div>
+            <h1 class="title is-1">Ranking Board</h1>
+            <section class="section">
+              <h2 class="title is-3 section-title">오늘의 절약왕</h2>
 
 
-        <!-- 1위부터 3위까지 -->
-        <div class="columns is-mobile">
-          <div class="column">
-            <img src="../static/podium_1.png" alt="메달아이콘_1">
-          </div>
-          <div class="column">
-            <img src="../static/podium_2.png" alt="메달아이콘_2">
-          </div>
-          <div class="column">
-            <img src="../static/podium_3.png" alt="메달아이콘_3">
-          </div>
+            <!-- 1위부터 3위까지 -->
+            <div class="columns is-mobile">
+              <div class="column">
+                <img src="../static/podium_1.png" alt="메달아이콘_1">
+              </div>
+              <div class="column">
+                <img src="../static/podium_2.png" alt="메달아이콘_2">
+              </div>
+              <div class="column">
+                <img src="../static/podium_3.png" alt="메달아이콘_3">
+              </div>
 
 
-        </div>
+             </div>
 
-    </div>
-    <!-- 1위부터 3위까지 -->
-    <div class="columns is-mobile">
-      {% for i in range(3) %}
-      <div class="column ">
-        <div class="box has-background-primary">
-          <!-- <p>{{ i + 1 }}위</p> -->
-          <div class="">
-            <p class="title is-3">
-              {% if savedayrank|length > i %}
-              {{ savedayrank[i]['_id'] }}
-              {% else %}
-            </p>
-            &nbsp;
-            {% endif %}
-          </div>
-          <hr>
-          <div>
-            <p class="subtitle is-1">
-              {% if savedayrank|length > i %}
-              {{ savedayrank[i]['total_cost'] }}
-              {% else %}
-              &nbsp;
-              {% endif %}
-            </p>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-      <!--{#<div class="column">
+            </div>
+            <!-- 1위부터 3위까지 -->
+            <div class="columns is-mobile">
+              {% for i in range(3) %}
+              <div class="column ">
+              <div class="box has-background-primary">
+                <!-- <p>{{ i + 1 }}위</p> -->
+                <div class="center-div">
+                  <span class="title is-3">
+                  {% if savedayrank|length > i %}
+                    {{ savedayrank[i]['_id'] }}
+                  {% else %}
+                  
+                  </span>
+                  {% endif %}
+                </div>
+                <hr>
+                <div class="center-div">
+                  <span class="subtitle is-1">
+                  {% if savedayrank|length > i %}
+                    {{ savedayrank[i]['total_cost'] }}
+                  {% else %}
+                   
+                  {% endif %}
+                  </span>
+                </div>
+              </div>
+              </div>
+            {% endfor %}
+              <!--{#<div class="column">
                 <div class="box">
                   <p>1위</p>
                   <p>{{saveweekrank[0]['_id']}}</p>
@@ -249,6 +252,38 @@
     </div>
     {% endfor %}
     <!--{#<div class="column">
+            </div>
+
+
+            <!-- 추후에 지울 수 있음 -->
+            <!-- 4위부터 6위까지 -->
+            {% for i in range(3, 6) %}
+              <div class="box">
+                  <div class="columns is-mobile is-justify-content-space-between">
+                    <div class="column is-1 has-text-centered is-flex is-align-items-center is-justify-content-center">
+                        <div class="title">{{ i + 1 }}</div>
+                      </div>
+                      <div class="column is-3 has-text-centered is-flex is-align-items-center is-justify-content-center">
+                        <span class="subtitle is-4">
+                          {% if savedayrank|length > i %}
+                              {{ savedayrank[i]['_id'] }}
+                          {% else %}
+                          
+                          {% endif %}
+                        </span>
+                          
+                      </div>
+                      <div class="column has-text-centered is-flex is-align-items-center is-justify-content-flex-end subtitle is-4">
+                        {% if savedayrank|length > i %}
+                            {{ savedayrank[i]['total_cost'] }}
+                        {% else %}
+                        
+                        {% endif %}
+                      </div>
+                  </div>
+              </div>
+              {% endfor %}
+              <!--{#<div class="column">
                 <div class="box">
                   <p>1위</p>
                   <p>{{saveweekrank[0]['_id']}}</p>
@@ -272,56 +307,57 @@
                   <p>ㅇㅇㅇ</p>
                 </div>
               </div>#}-->
-  </section>
+                  
+            </section>
+            <hr>
 
+            <section class="section">
+              <h2 class="title is-3 section-title">이 주의 절약왕</h2>
 
-  <hr>
+            <!-- 1위부터 3위까지 -->
+            <div class="columns is-mobile">
+              <div class="column">
+                <img src="../static/podium_1.png" alt="메달아이콘_1">
+              </div>
+              <div class="column">
+                <img src="../static/podium_2.png" alt="메달아이콘_2">
+              </div>
+              <div class="column">
+                <img src="../static/podium_3.png" alt="메달아이콘_3">
+              </div>
 
-  <section class="section">
-    <h2 class="title is-4 section-title">이 주의 절약왕</h2>
+             </div>
 
-    <!-- 1위부터 3위까지 -->
-    <div class="columns is-mobile">
-      <div class="column">
-        <img src="../static/podium_1.png" alt="메달아이콘_1">
-      </div>
-      <div class="column">
-        <img src="../static/podium_2.png" alt="메달아이콘_2">
-      </div>
-      <div class="column">
-        <img src="../static/podium_3.png" alt="메달아이콘_3">
-      </div>
-
-
-    </div>
-
-    <div class="columns is-mobile">
-      {% for i in range(3) %}
-      <div class="column ">
-        <div class="box has-background-primary">
-          <!-- <p>{{ i + 1 }}위</p> -->
-          <div class="">
-            <p class="title is-3">
-              {% if saveweekrank|length > i %}
-              {{ saveweekrank[i]['_id'] }}
-              {% else %}
-            </p>
-            &nbsp;
-            {% endif %}
-          </div>
-          <div>
-            <p class="subtitle is-1">
-              {% if saveweekrank|length > i %}
-              {{ saveweekrank[i]['total_cost'] }}
-              {% else %}
-              &nbsp;
-              {% endif %}
-            </p>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-      <!--{#<div class="column">
+             <div class="columns is-mobile">
+              {% for i in range(3) %}
+              <div class="column ">
+              <div class="box has-background-primary">
+                <!-- <p>{{ i + 1 }}위</p> -->
+                <div class="center-div">
+                  <span class="title is-3">
+                  {% if saveweekrank|length > i %}
+                    {{ saveweekrank[i]['_id'] }}
+                  {% else %}
+                  
+                  </span>
+                    
+                  {% endif %}
+                </div>
+                <hr>
+                <div class="center-div">
+                    <span class="subtitle is-1">
+                    {% if saveweekrank|length > i %}
+                      {{ saveweekrank[i]['total_cost'] }}
+                    {% else %}
+                      
+                    {% endif %}
+                    </span>
+                  
+                </div>
+              </div>
+              </div>
+            {% endfor %}
+              <!--{#<div class="column">
                 <div class="box">
                   <p>1위</p>
                   <p>{{saveweekrank[0]['_id']}}</p>
@@ -345,34 +381,37 @@
                   <p>ㅇㅇㅇ</p>
                 </div>
               </div>#}-->
-    </div>
+            </div>
 
-    <!-- 추후에 지울 수 있음 -->
-    <!-- 4위부터 6위까지 -->
-    {% for i in range(3, 6) %}
-    <div class="box">
-      <div class="columns is-mobile">
-        <div class="column is-1">
-          <div class="title">{{ i + 1 }}</div>
-        </div>
-        <div class="column is-3">
-          {% if saveweekrank|length > i %}
-          {{ saveweekrank[i]['_id'] }}
-          {% else %}
-          &nbsp;
-          {% endif %}
-        </div>
-        <div class="column is-1">
-          {% if saveweekrank|length > i %}
-          {{ saveweekrank[i]['total_cost'] }}
-          {% else %}
-          &nbsp;
-          {% endif %}
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-    <!--{#<div class="column">
+            <!-- 추후에 지울 수 있음 -->
+            <!-- 4위부터 6위까지 -->
+            {% for i in range(3, 6) %}
+              <div class="box">
+                  <div class="columns is-mobile is-justify-content-space-between">
+                    <div class="column is-1 has-text-centered is-flex is-align-items-center is-justify-content-center">
+                        <div class="title">{{ i + 1 }}</div>
+                      </div>
+                      <div class="column is-3 has-text-centered is-flex is-align-items-center is-justify-content-center">
+                        <span class="subtitle is-4">
+                          {% if saveweekrank|length > i %}
+                              {{ saveweekrank[i]['_id'] }}
+                          {% else %}
+                          {% endif %}
+                        </span>
+                          
+                      </div>
+                      <div class="column has-text-centered is-flex is-align-items-center is-justify-content-flex-end subtitle is-4">
+                        {% if saveweekrank|length > i %}
+                            {{ saveweekrank[i]['total_cost'] }}
+                        {% else %}
+                        
+                        {% endif %}
+                      </div>
+                  </div>
+              </div>
+              {% endfor %}
+
+              <!--{#<div class="column">
                 <div class="box">
                   <p>1위</p>
                   <p>{{saveweekrank[0]['_id']}}</p>
@@ -396,13 +435,11 @@
                   <p>ㅇㅇㅇ</p>
                 </div>
               </div>#}-->
-  </section>
-
-
-
-
-  </div>
-  </section>
+            </section>
+        </section>
+      </body>
+    </html>
+    
 </body>
 
 </html>
