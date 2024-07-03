@@ -7,7 +7,8 @@ from flask import Flask,render_template,jsonify,request
 from flask.json.provider import JSONProvider
 from flask_jwt_extended import *
 from bson import ObjectId
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash,check_password_hash
+from math import ceil
 
 app = Flask(__name__)
 from pymongo import MongoClient
@@ -17,6 +18,12 @@ db = client.dbjungle
 collection = db['moneyPlan']
 
 userID=''
+week_cost=[{},{}]
+total_cost=0
+week_rank=0
+today_rank=0
+
+
 
 #userdata =sdfsdf
 
@@ -55,6 +62,27 @@ def get_month_days(year,month):
         month_name = calendar.month_name[month]
         return month_name,month_days
 
+#해당 요일의 주차를 얻는 함수
+def week_of_month(date):#datetime 타입
+    first_day = date.replace(day=1)
+
+    dom = date.day
+    adjusted_dom = dom + first_day.weekday()
+
+    return int(ceil(adjusted_dom/7.0))
+
+def get_week_byStr(date):#string형
+    20240703
+    year = int(date[:4])
+    month = int(date[4:6])
+    day = int(date[6:8])
+
+    dateTime = datetime.datetime(year,month,day)
+
+    return dateTime
+
+
+
 @app.route('/')
 def home():
     return render_template('login.html')
@@ -69,11 +97,101 @@ def dailySpending():
 
 @app.route('/myPage')
 def myPage():
+    current_iso_week=datetime.datetime.now().isocalendar()[1]
+
+    pipeline = [
+    # userId가 일치하는 문서만 필터링
+    {"$match": {"userId": userID}},
+    # 저장된 날짜 문자열을 날짜 객체로 변환
+    {"$addFields": {
+        "convertedDate": {"$dateFromString": {"dateString": "$date", "format": "%y%m%d"}}
+    }},
+    # 변환된 날짜의 ISO 주차를 계산
+    {"$addFields": {
+        "isoWeekConvertedDate": {"$isoWeek": "$convertedDate"}
+    }},
+    # ISO 주차가 현재 주차와 일치하는 문서만 필터링
+    {"$match": {"isoWeekConvertedDate": current_iso_week}},
+    # 요일별로 그룹화하여 cost를 합산하고 데이터를 정리
+    {"$group": {
+        "_id": {"$isoDayOfWeek": "$convertedDate"},
+        "total_cost": {"$sum": "$cost"},
+        "dates": {"$push": "$date"}
+    }},
+    # 요일 순으로 정렬 (ISO 요일: 1(월요일) ~ 7(일요일))
+    {"$sort": {"_id": 1}},
+    # 필요한 필드만 포함하도록 변환
+    {"$project": {
+        "_id": 0,
+        "day_of_week": "$_id",
+        "total_cost": 1,
+        "dates": 1
+    }}
+]
+
+# MongoDB 컬렉션 객체가 있다고 가정합니다
+# `collection`을 실제 컬렉션 이름으로 교체하세요
+    results = collection.aggregate(pipeline)
+
     return render_template('myPage.html')
 
 @app.route('/rankingBoard')
 def rankingBoard():
-    return render_template('rankingBoard.html')
+    date = request.args.get('date')
+
+    weekCount = week_of_month(datetime.datetime.now())
+    
+    # MongoDB 집계 파이프라인
+    '''pipeline = [
+        {"$match": {"date": date}},  # date로 필터링
+        {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
+        {"$match": {"total_cost": {"$gte": 1}}},
+        {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
+    ]'''
+
+    current_date = datetime.datetime.now()
+
+    '''pipeline = [
+    # 시스템 날짜의 ISO 주(week)를 계산하여 해당 주와 일치하는지 확인
+    {"$addFields": {
+        "convertedDate": {"$dateFromString": {"dateString": "$date", "format": "%Y%m%d"}}
+    }},
+    {"$match": {"$expr": {"$eq": [{"$isoWeek": "$convertedDate"}, {"$isoWeek": {"dateFromString": {"dateString": current_date}}}]}}},
+    {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
+    {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
+    ]'''
+
+    pipeline = [
+    # 저장된 날짜 문자열을 날짜 객체로 변환
+    {"$addFields": {
+        "convertedDate": {"$dateFromString": {"dateString": "$date", "format": "%Y%m%d"}}
+    }},
+    # 변환된 날짜와 현재 날짜에 대한 ISO 주를 계산
+    {"$addFields": {
+        "isoWeekConvertedDate": {"$isoWeek": "$convertedDate"},
+        "isoWeekCurrentDate": {"$isoWeek": current_date}
+    }},
+    # ISO 주가 현재 ISO 주와 일치하는 문서를 찾기
+    {"$match": {"$expr": {"$eq": ["$isoWeekConvertedDate", "$isoWeekCurrentDate"]}}},
+    # userId로 문서를 그룹화하고 cost를 합산
+    {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}},"dates":{"$push":"$date"}}},
+    # total_cost 기준으로 오름차순 정렬
+    {"$sort": {"total_cost": 1}}
+]
+
+
+    # 집계 실행
+    result = list(collection.aggregate(pipeline))
+
+
+    dayrank = []
+
+    for data in result:
+        for date in data['dates']:
+            if(get_week_byStr(date).weekday() == datetime.datetime.now().weekday()):
+                dayrank.append(data)
+
+    return render_template('rankingBoard.html',saveweekrank=result,savedayrank=dayrank)
 
 
 @app.route('/login',methods=['POST'])
@@ -129,16 +247,24 @@ def logout():
 @app.route('/register',methods=['POST'])
 def register():
     try:
+        hashed_password = generate_password_hash(request.form['userPw_give'])
+
+        print(hashed_password)
+
         # 클라이언트로부터 JSON 데이터 받기
         userId_receive = request.form['userId_give']
-        userPw_receive = request.form['userPw_give']
+        userPw_receive = hashed_password
         userName_receive = request.form['userName_give']
+        category_receive = request.form['Category_give']
+        cost_receive = request.form['Cost_give']
         
         # MongoDB에 데이터 삽입
         data = {
             'userId': userId_receive,
             'userPw': userPw_receive,
-            'userName': userName_receive
+            'userName': userName_receive,
+            'category': category_receive,
+            'cost' : cost_receive
         }
             
         result = collection.insert_one(data)
@@ -189,7 +315,7 @@ def getAllRank():
 
 @app.route('/setMyCost')
 def myCalendar():
-    today = datetime.today()
+    today = datetime.datetime.today()
 
     year = today.year
     month = today.month

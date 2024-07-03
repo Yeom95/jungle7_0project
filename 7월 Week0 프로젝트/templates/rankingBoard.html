@@ -55,7 +55,7 @@
                 <button class="button is-light">로그 아웃</button>
               </div>
               <div class="column is-narrow">
-                <button class="button is-warning">my page</button>
+                <button onClick="location.href='/myPage'" class="button is-warning">my page</button>
               </div>
             </div>
       
@@ -64,19 +64,29 @@
               <div class="column">
                 <div class="box">
                   <p>1위</p>
-                  <p>ㅇㅇㅇ</p>
+                  <p>
+                    {{savedayrank[0]['_id']}}
+                  </p>
+                  <p>
+                    {{savedayrank[0]['total_cost']}}
+                  </p>
                 </div>
               </div>
               <div class="column">
                 <div class="box">
                   <p>2위</p>
-                  <p>ㅇㅇㅇ</p>
+                  <p>
+                    {{savedayrank[1]['_id']}}</p>
+                  <p>
+                    {{savedayrank[1]['total_cost']}}</p>
                 </div>
               </div>
               <div class="column">
                 <div class="box">
                   <p>3위</p>
-                  <p>ㅇㅇㅇ</p>
+                  <p>ㅇㅇㅇ</p>        
+                    <p>
+                      0</p>
                 </div>
               </div>
             </div>
@@ -88,13 +98,19 @@
               <div class="column">
                 <div class="box">
                   <p>1위</p>
-                  <p>ㅇㅇㅇ</p>
+                  <p>{{saveweekrank[0]['_id']}}</p>
+                  <p>
+                    {{saveweekrank[0]['total_cost']}}
+                  </p>
                 </div>
               </div>
               <div class="column">
                 <div class="box">
                   <p>2위</p>
-                  <p>ㅇㅇㅇ</p>
+                  <p>{{saveweekrank[1]['_id']}}</p>
+                  <p>
+                    {{saveweekrank[1]['total_cost']}}
+                  </p>
                 </div>
               </div>
               <div class="column">
