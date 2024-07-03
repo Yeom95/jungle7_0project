@@ -92,10 +92,17 @@ def home():
 def signUp():
     return render_template('signUp.html')
 
-@app.route('/dailySpending',methods=['POST'])
+@app.route('/dailySpending', methods=['POST'])
 def dailySpending():
     costDate = request.form['costDate']
-    return render_template('dailySpending.html',date=costDate,user=userID)
+
+    # JSON 응답을 반환
+    return jsonify({'result': 'success', 'costDate': costDate})
+
+@app.route('/dailySpendingPage')
+def dailySpendingPage():
+    costDate = request.args.get('costDate')
+    return render_template('dailySpending.html', date=costDate, user=userID)
 
 @app.route('/myPage')
 def myPage():

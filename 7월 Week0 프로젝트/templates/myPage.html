@@ -50,19 +50,28 @@
     function moveDailySpending(date)
     {
       $.ajax({
-          type:"POST",
-          url:"/dailySpending",
-          data:{
-            costDate:date,
-          },
-          success:function(response){
-            if(response['result'] != 'success'){
-              alert(response['msg'])
-            }
-        }
+                type: "POST",
+                url: "/dailySpending",
+                data: {
+                    costDate: date,
+                },
+                success: function(response) {
+                    if (response['result'] == 'success') {
+                        // 성공 메시지를 표시
+                        alert(response['msg']);
+                        // 페이지를 이동하여 렌더링
+                        window.location.href = `/dailySpendingPage?costDate=${date}`;
+                    } else {
+                        alert(response['msg']);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log("Error: " + error);
+                    alert("An error occurred: " + xhr.responseText);
+                }
+            });
           
           
-    })
     }
   </script>
 </head>
@@ -86,8 +95,8 @@
   <div onClick="moveDailySpending('{{ date_value }}')" class="box">
     <span class="day">{{ days[i % 7] }}</span>
     {% if day_data %}
-      {% set date_costs = day_data[0]['date_costs'][0] %}
-      <div class="data">{{ date_costs['cost'] }}</div>
+    {% set total_cost = day_data[0]['date_costs'] | map(attribute='cost') | sum %}
+      <div class="data">{{ total_cost }}</div>
     {% else %}
       <span class="date"></span>
       <div class="data"></div>
@@ -148,7 +157,8 @@
       </div>
 
       <div class="content">
-        <p>- 총 금액: {{ weekInfo[0]['total_cost'] }}원</p>
+        {% set total_costs = weekInfo | map(attribute='total_cost') | sum %}
+        <p>- 총 금액: {{ total_costs }}원</p>
         <p>- 오늘의 나의 순위: {{ today_rank }}위</p>
         <p>- 이번 주의 나의 순위: {{ weekly_rank }}위</p>
       </div>
