@@ -92,9 +92,10 @@ def home():
 def signUp():
     return render_template('signUp.html')
 
-@app.route('/dailySpending')
+@app.route('/dailySpending',methods=['POST'])
 def dailySpending():
-    return render_template('dailySpending.html')
+    costDate = request.form['costDate']
+    return render_template('dailySpending.html',date=costDate,user=userID)
 
 @app.route('/myPage')
 def myPage():
