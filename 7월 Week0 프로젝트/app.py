@@ -9,6 +9,7 @@ from flask_jwt_extended import *
 from bson import ObjectId
 from werkzeug.security import generate_password_hash,check_password_hash
 from math import ceil
+import uuid
 
 app = Flask(__name__)
 from pymongo import MongoClient
@@ -104,6 +105,13 @@ def signUp():
 def dailySpendingPage():
     costDate = request.args.get('costDate')
     thisYear,thisMonth,thisDay = slice_stringDate(costDate)
+
+
+    return render_template('dailySpending.html',month=thisMonth,day=thisDay, date=costDate)
+
+@app.route('/dailySpendingBox',methods=['GET'])
+def dailySpendingBox():
+    costDate = request.args.get('costDate')
     costDateTime = get_week_byStr(costDate)
 
     pipeline = [
@@ -113,7 +121,7 @@ def dailySpendingPage():
         }},
         {"$match":{"convertedDate":costDateTime}},
         {"$project": {
-        "_id": 0,
+        "_id": 1,
         "category": 1,
         "cost": 1
     }}
@@ -121,8 +129,39 @@ def dailySpendingPage():
 
     results = list(collection.aggregate(pipeline))
 
+    return jsonify({'result':'success','costList':results})
 
-    return render_template('dailySpending.html', costMember = results,month=thisMonth,day=thisDay, user=userID)
+@app.route('/dailySpendingBox',methods=['POST'])
+def dailySpendingBoxPost():
+    costDate = request.form['post_costDate']
+    category = int(request.form['post_category'])
+    cost = int(request.form['post_cost'])
+
+    post_cost_data = {'userId':userID,'category':category,'cost':cost,'date':costDate}
+
+    collection.insert_one(post_cost_data)
+
+    return jsonify({'result':'success','msg':'POST 연결'})
+
+@app.route('/dailySpendingBoxDelete',methods=['POST'])
+def dailySpendingBoxDelete():
+    costID = request.form['delete_ID']
+    '''costDate = request.form['delete_costDate']
+    category = int(request.form['delete_category'])
+    cost = int(request.form['delete_cost'])
+
+    delete_conditions = {
+        "$and": [
+            {"userId":userID},
+            {"category":category},
+            {"cost":cost},
+            {"date":costDate}
+        ]
+    }'''
+
+    collection.delete_one({'_id':ObjectId(costID)})
+
+    return jsonify({'result':'success','msg':'POST 연결'})
 
 @app.route('/myPage')
 def myPage(): 
@@ -316,14 +355,13 @@ def register():
     try:
         hashed_password = generate_password_hash(request.form['userPw_give'], method='pbkdf2')
 
-        print(hashed_password)
-
         # 클라이언트로부터 JSON 데이터 받기
         userId_receive = request.form['userId_give']
         userPw_receive = hashed_password
         userName_receive = request.form['userName_give']
         category_receive = 0
         cost_receive = 0
+        user_UUID = str(uuid.uuid4())
         
         # MongoDB에 데이터 삽입
         data = {
@@ -331,7 +369,8 @@ def register():
             'userPw': userPw_receive,
             'userName': userName_receive,
             'category': category_receive,
-            'cost' : cost_receive
+            'cost' : cost_receive,
+            'UUID' : user_UUID
         }
             
         result = collection.insert_one(data)
@@ -343,6 +382,7 @@ def register():
         return jsonify({"result":'success'})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/getUserRank',methods=['GET'])
 def getUserRank():
