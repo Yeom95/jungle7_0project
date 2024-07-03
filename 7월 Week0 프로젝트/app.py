@@ -249,10 +249,11 @@ def login():
 
     
 
-@app.route('/logout',methods=['GET'])
+@app.route('/logout',methods=['POST'])
 def logout():
-    #로그아웃 기능 구현
-    return 0
+    response = jsonify({'result' : 'success'})
+    response.status_code = 200
+    return response
 
 @app.route('/register',methods=['POST'])
 def register():
