@@ -18,6 +18,8 @@
 <!-- ajax -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+  <script src="https://kit.fontawesome.com/be354233e0.js" crossorigin="anonymous"></script>
+
   <style>
     .box {
       display: flex;
@@ -183,7 +185,9 @@
     <div class="container">
       <div class="field">
         <div class="control">
-          <button onClick="location.href='/myPage'" class="button is-light">돌아가기</button>
+          <button class="button is-light subtitle" onClick="location.href='/rankingBoard'">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
         </div>
       </div>
 
@@ -191,6 +195,7 @@
         <h1 class="is-size-2">{{month}}월 {{day}}일</h1>
       </div>
 
+      <hr>
       <!-- 붙을내용 -->
 
        <!-- 눈에 보이는 박스   -->

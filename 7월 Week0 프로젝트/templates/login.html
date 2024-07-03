@@ -36,6 +36,18 @@
       .logo-container {
         padding-bottom:2rem;
       }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      
+      section {
+        width: 640px;
+        height: 514px;
+      }
     </style>
 
     <script>
@@ -93,7 +105,14 @@
           <button onclick="userLogin()" id="loginButton" class="button is-primary is-fullwidth">로그인</button>
           <div class="signUp-link-container">
             <div class="signUp-link">
-              <a href="/signUp">회원가입</a>
+              <span class="icon-text">
+                <span class="icon ">
+                  <i class="fas fa-arrow-right"></i>
+                </span>
+                  <a class="has-text-black" href="/signUp">회원가입</a>
+                
+              </span>
+              
             </div>
           </div>
         </div>

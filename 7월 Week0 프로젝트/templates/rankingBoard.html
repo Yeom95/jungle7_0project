@@ -68,6 +68,15 @@
     .out-podium-cost {
       padding: 0;
     }
+    .main-screen {
+      max-width: 1300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #chartContainer {
+      display: flex;
+      justify-content: center;
+    }
     </style>
 
     <!-- 창 사이즈에 따라 클래스 추가 및 삭제  -->
@@ -97,12 +106,16 @@
     </script>
   
     </head>
-    <body>
-        <section class="section">
-            <div class="columns is-mobile is-justify-content-flex-end">
-              <div class="column"><button onClick="location.href='/'" class=" is-narrow button is-light subtitle">로그아웃</button></div>
-              <div class="column"><button onClick="location.href='/myPage'" class="column button is-warning subtitle is-narrow">my page</button></div>
+    <body class="is-justify-content-center">
+        <section class="section main-screen">
+          <div class="columns is-mobile is-justify-content-flex-end">
+            <div class="column is-narrow">
+              <button onClick="location.href='/'" class="button is-light subtitle">로그아웃</button>
             </div>
+            <div class="column is-narrow">
+              <button onClick="location.href='/myPage'" class="button is-warning subtitle">my page</button>
+            </div>
+          </div>
             <h1 class="title is-1">Ranking Board</h1>
             <section class="section">
 
@@ -272,62 +285,67 @@
               {% endfor %}
 
             </section>
+            <hr>
+            <section class="section">
+              <h2 class="title is-3 section-title">오늘의 거지왕</h2>
+      
+              <!-- 차트 추가 -->
+              <div id="chartContainer">
+                <canvas id="myPolarAreaChart" width="400" height="400"></canvas>
+                <script>
+                  async function fetchData() {
+                    const response = await fetch('/getAllRank');
+                    const data = await response.json();
+          
+                    const labels = data.labels;
+                    const total_costs = data.ratios;
+          
+                    createPolarAreaChart(labels, total_costs);
+                  }
+          
+                  function createPolarAreaChart(labels, data) {
+                    var ctx = document.getElementById('myPolarAreaChart').getContext('2d');
+                    var myPolarAreaChart = new Chart(ctx, {
+                      type: 'polarArea',
+                      data: {
+                        labels: labels,
+                        datasets: [{
+                          label: '사용자별 총 비용',
+                          data: data,
+                          backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(255, 205, 86, 0.2)',
+                            'rgba(201, 203, 207, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            // 필요에 따라 더 많은 색상을 추가하십시오.
+                          ],
+                          borderColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(75, 192, 192)',
+                            'rgb(255, 205, 86)',
+                            'rgb(201, 203, 207)',
+                            'rgb(54, 162, 235)',
+                            // 필요에 따라 더 많은 색상을 추가하십시오.
+                          ],
+                          borderWidth: 1
+                        }]
+                      },
+                      options: {
+                        scales: {
+                          r: {
+                            beginAtZero: true
+                          }
+                        }
+                      }
+                    });
+                  }
+                  // 페이지 로드 시 fetchData 함수 호출
+                  fetchData();
+                </script>
+              </div>
+            </section>
         </section>
 
-      <!-- 차트 추가 -->
-      <div id="chartContainer">
-        <canvas id="myPolarAreaChart" width="400" height="400"></canvas>
-        <script>
-          async function fetchData() {
-            const response = await fetch('/getAllRank');
-            const data = await response.json();
-  
-            const labels = data.labels;
-            const total_costs = data.ratios;
-  
-            createPolarAreaChart(labels, total_costs);
-          }
-  
-          function createPolarAreaChart(labels, data) {
-            var ctx = document.getElementById('myPolarAreaChart').getContext('2d');
-            var myPolarAreaChart = new Chart(ctx, {
-              type: 'polarArea',
-              data: {
-                labels: labels,
-                datasets: [{
-                  label: '사용자별 총 비용',
-                  data: data,
-                  backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(255, 205, 86, 0.2)',
-                    'rgba(201, 203, 207, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    // 필요에 따라 더 많은 색상을 추가하십시오.
-                  ],
-                  borderColor: [
-                    'rgb(255, 99, 132)',
-                    'rgb(75, 192, 192)',
-                    'rgb(255, 205, 86)',
-                    'rgb(201, 203, 207)',
-                    'rgb(54, 162, 235)',
-                    // 필요에 따라 더 많은 색상을 추가하십시오.
-                  ],
-                  borderWidth: 1
-                }]
-              },
-              options: {
-                scales: {
-                  r: {
-                    beginAtZero: true
-                  }
-                }
-              }
-            });
-          }
-          // 페이지 로드 시 fetchData 함수 호출
-          fetchData();
-        </script>
-      </div>
       </body>
 </html>
