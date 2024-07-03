@@ -16,65 +16,58 @@
          <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
     <script type="text/javascript" src="./jquery.cookie.js"></script>
-     <!-- 구글폰트 -->
-     <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+    
 
     <title>정글 거지방</title>
 
     <!--style-->
     <style type="text/css">
-    </style>
-
-    <script>
-      function userLogin(){
-        $.ajax({
-          type:"POST",
-          url:"/login",
-          data:{
-            id_send:$("#id").val(),
-            pw_send:$("#pw").val(),
-          },
-          success:function(response){
-            console.log(response)
-            if(response['result'] == 'success'){
-              $.cookie('mytoken',response['token']);
-              alert('로그인 완료')
-              window.location.href = '/rankingBoard'
-            }
-            else{
-            alert(response['msg'])
-          }
-        }
-          
-          
-    })
+      h2 {
+        padding:1rem 0;
       }
-    </script>
-
+      .signUp-link-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+      }
+      .signUp-link {
+        padding:7px 0;
+      }
+      .logo-container {
+        padding-bottom:2rem;
+      }
+    </style>
 </head>
 <body>
     <section class="section">
       <div class="container">
+        <i class="fas fa-arrow-right"></i>
+        <div class="logo-container">
+          <h1 class="title is-1">정글 거지방</h1>
+        </div>
+        <div>
+          <h2 class="subtitle is-3">Login </h2>
+        </div>
         <div class="field">
-          <label class="label" for="id">아이디</label>
           <div class="control">
-            <input class="input" type="text" id="id" placeholder="아이디를 입력하세요">
+            <input class="input" type="text" id="id" placeholder="ID">
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+            <input class="input" type="password" id="pw" placeholder="Password">
           </div>
         </div>
   
-        <div class="field">
-          <label class="label" for="password">비밀번호</label>
-          <div class="control">
-            <input class="input" type="password" id="pw" placeholder="비밀번호를 입력하세요">
-          </div>
-        </div>
-  
-        <div class="field is-grouped">
-          <div class="control">
+        <div class="login-and-signUp">
+          <!-- <div class="control">
             <button class="button is-link" onClick="location.href='/signUp'">회원가입</button>
-          </div>
-          <div class="control">
-            <button onclick="userLogin()" id="loginButton" class="button is-primary">로그인</button>
+          </div> -->
+          <button onclick="location.href='/rankingBoard'" id="loginButton" class="button is-primary is-fullwidth">로그인</button>
+          <div class="signUp-link-container">
+            <div class="signUp-link">
+              <a href="/signUp">회원가입</a>
+            </div>
           </div>
         </div>
       </div>
