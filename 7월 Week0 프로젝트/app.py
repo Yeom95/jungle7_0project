@@ -105,7 +105,7 @@ def myPage():
     {"$match": {"userId": userID}},
     # 저장된 날짜 문자열을 날짜 객체로 변환
     {"$addFields": {
-        "convertedDate": {"$dateFromString": {"dateString": "$date", "format": "%y%m%d"}}
+        "convertedDate": {"$dateFromString": {"dateString": "$date", "format": "%Y%m%d"}}
     }},
     # 변환된 날짜의 ISO 주차를 계산
     {"$addFields": {
@@ -117,7 +117,7 @@ def myPage():
     {"$group": {
         "_id": {"$isoDayOfWeek": "$convertedDate"},
         "total_cost": {"$sum": "$cost"},
-        "dates": {"$push": "$date"}
+        "date_costs": {"$push": {"date": "$date", "cost": "$cost"}}
     }},
     # 요일 순으로 정렬 (ISO 요일: 1(월요일) ~ 7(일요일))
     {"$sort": {"_id": 1}},
@@ -126,21 +126,21 @@ def myPage():
         "_id": 0,
         "day_of_week": "$_id",
         "total_cost": 1,
-        "dates": 1
+        "date_costs": 1
     }}
 ]
 
 # MongoDB 컬렉션 객체가 있다고 가정합니다
 # `collection`을 실제 컬렉션 이름으로 교체하세요
-    results = collection.aggregate(pipeline)
+    results = list(collection.aggregate(pipeline))
 
-    return render_template('myPage.html')
+    return render_template('myPage.html',weekInfo = results)
 
 @app.route('/rankingBoard')
 def rankingBoard():
     date = request.args.get('date')
 
-    weekCount = week_of_month(datetime.datetime.now())
+    weekCount = week_of_month(datetime.datetime.now(),)
     
     # MongoDB 집계 파이프라인
     '''pipeline = [
@@ -206,6 +206,7 @@ def login():
     user_id = request.form['id_send']
     user_pw = request.form['pw_send']
 
+    global userID
     userID = user_id
 
     for user in result:

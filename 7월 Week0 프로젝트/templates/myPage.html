@@ -56,59 +56,77 @@
 
       <h2 class="title is-4 section-title">이번 주 나의 지출은?</h2>
       <div class="columns is-centered">
-        <div class="column is-narrow">
+
+        {% set days = ['일', '월', '화', '수', '목', '금', '토'] %}
+
+{% for i in [7, 1, 2, 3, 4, 5, 6] %}
+  <div class="box">
+    <span class="day">{{ days[i % 7] }}</span>
+    {% set day_data = weekInfo | selectattr("day_of_week", "equalto", i) | list %}
+    {% if day_data %}
+      {% set date_costs = day_data[0]['date_costs'][0] %}
+      <div class="data">{{ date_costs['cost'] }}</div>
+    {% else %}
+      <span class="date"></span>
+      <div class="data"></div>
+    {% endif %}
+  </div>
+{% endfor %}
+
+
+        <!--{#<div class="column is-narrow">
           <div class="box">
             <span class="day">일</span>
-            <span class="date">{{ date_sun }}</span>
-            <div class="data">{{ cost_sun }}</div>
+            <span class="date">{{ weekInfo[6]['date_costs']['date'][4:6] }}</span>
+            <div class="data">{{ weekInfo[6]['date_costs']['cost'] }}</div>
           </div>
         </div>
         <div class="column is-narrow">
           <div class="box">
             <span class="day">월</span>
-            <span class="date">{{ date_mon }}</span>
-            <div class="data">{{ cost_mon }}</div>
+            <span class="date">{{ weekInfo[0]['date_costs']['date'][4:6] }}</span>
+            <div class="data">{{ weekInfo[0]['date_costs']['cost'] }}</div>
           </div>
         </div>
         <div class="column is-narrow">
           <div class="box">
             <span class="day">화</span>
-            <span class="date">{{ date_tues }}</span>
-            <div class="data">{{ cost_tues }}</div>
+            <span class="date">{{ weekInfo[1]['date_costs']['date'][4:6] }}</span>
+            <div class="data">{{ weekInfo[1]['date_costs']['cost'] }}</div>
           </div>
         </div>
         <div class="column is-narrow">
           <div class="box">
             <span class="day">수</span>
-            <span class="date">{{ date_wed }}</span>
-            <div class="data">{{ cost_wed }}</div>
+            <span class="date">{{ weekInfo[2]['date_costs']['date'][4:6] }}/span>
+            <div class="data">{{ weekInfo[2]['date_costs']['cost'] }}</div>
           </div>
         </div>
         <div class="column is-narrow">
           <div class="box">
             <span class="day">목</span>
-            <span class="date">{{ date_thu }}</span>
-            <div class="data">{{ cost_thu }}</div>
+            <span class="date">{{ weekInfo[3]['date_costs']['date'][4:6] }}</span>
+            <div class="data">{{ weekInfo[3]['date_costs']['cost'] }}</div>
           </div>
         </div>
         <div class="column is-narrow">
           <div class="box">
             <span class="day">금</span>
-            <span class="date">{{ date_fri }}</span>
-            <div class="data">{{ cost_fri }}</div>
+            <span class="date">{{ weekInfo[4]['date_costs']['date'][4:6] }}</span>
+            <div class="data">{{ weekInfo[4]['date_costs']['cost'] }}</div>
           </div>
         </div>
         <div class="column is-narrow">
           <div class="box">
             <span class="day">토</span>
-            <span class="date">{{ cost_sat }}</span>
-            <div class="data">{{ cost_sat }}</div>
+            <span class="date">{{ weekInfo[5]['date_costs']['date'][4:6] }}</span>
+            <div class="data">{{ weekInfo[5]['date_costs']['cost'] }}</div>
           </div>
-        </div>
+        </div>#}-->
       </div>
 
       <div class="content">
-        <p>- 총 금액: {{ total_amount }}원</p>
+        <p>- 총 금액: {{ weekInfo[0]['total_cost'] }}원</p>
         <p>- 오늘의 나의 순위: {{ today_rank }}위</p>
         <p>- 이번 주의 나의 순위: {{ weekly_rank }}위</p>
       </div>
