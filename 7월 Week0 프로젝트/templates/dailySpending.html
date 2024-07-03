@@ -184,11 +184,13 @@
 
        <!-- 눈에 보이는 박스   -->
       <div class="box shown-box">
-          <div>
-            <span>${thing}</span> 
+        {% for member in costMember %}
+        <div>
+            <span>{{ member.category }}</span>
             <span>:</span>
-            <span>${cost}원</span>
-          </div>
+            <span>{{ member.cost }}원</span>
+        </div>
+    {% endfor %}
           <div>
             <button class="button is-danger" onclick="deleteMemos(this)">삭제</button>
             <button class="button is-success" onclick="toggleEditBox(this)">수정</button>

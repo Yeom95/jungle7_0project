@@ -112,20 +112,32 @@ def dailySpendingPage():
             "convertedDate": {"$dateFromString": {"dateString": "$date", "format": "%Y%m%d"}}
         }},
         {"$match":{"convertedDate":costDateTime}},
-        {"$group": {
-            "_id" : {"$toInt": "$category"},
-            "cost" : {"$toInt": "$cost"}
-        }},
-    ]
+        {"$project": {
+        "_id": 0,
+        "category": 1,
+        "cost": 1
+    }}
+]
 
     results = list(collection.aggregate(pipeline))
 
 
-    return render_template('dailySpending.html', month=thisMonth,day=thisDay, user=userID)
+    return render_template('dailySpending.html', costMember = results,month=thisMonth,day=thisDay, user=userID)
 
 @app.route('/myPage')
-def myPage():
-    current_iso_week=datetime.datetime.now().isocalendar()[1]
+def myPage(): 
+    current_date = datetime.datetime.now()
+    current_iso_week = current_date.isocalendar()[1]
+    current_year = current_date.year
+
+    # 현재 주차의 시작일과 종료일을 계산
+    start_of_week = current_date - datetime.timedelta(days=current_date.weekday()+1)
+    #end_of_week = start_of_week + datetime.timedelta(days=6)
+
+    # 현재 주차의 모든 날짜를 YYYYMMDD 형식의 문자열로 배열에 저장
+    weekList = [{'iso_day': (start_of_week + datetime.timedelta(days=i)).isocalendar()[2],
+                 'date': (start_of_week + datetime.timedelta(days=i)).strftime('%Y%m%d')}
+                for i in range(7)]
 
     pipeline = [
     # userId가 일치하는 문서만 필터링
@@ -161,7 +173,7 @@ def myPage():
 # `collection`을 실제 컬렉션 이름으로 교체하세요
     results = list(collection.aggregate(pipeline))
 
-    return render_template('myPage.html',weekInfo = results)
+    return render_template('myPage.html',weekInfo = results,weekDays=weekList)
 
 @app.route('/rankingBoard')
 def rankingBoard():

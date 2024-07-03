@@ -37,6 +37,33 @@
         padding-bottom:2rem;
       }
     </style>
+
+    <script>
+      function userLogin(){
+        $.ajax({
+          type:"POST",
+          url:"/login",
+          data:{
+            id_send:$("#id").val(),
+            pw_send:$("#pw").val(),
+          },
+          success:function(response){
+            console.log(response)
+            if(response['result'] == 'success'){
+              $.cookie('mytoken',response['token']);
+              alert('로그인 완료')
+              window.location.href = '/rankingBoard'
+            }
+            else{
+            alert(response['msg'])
+            }
+          }
+          
+          
+        })}
+    </script>
+</script>
+
 </head>
 <body>
     <section class="section">
@@ -63,7 +90,7 @@
           <!-- <div class="control">
             <button class="button is-link" onClick="location.href='/signUp'">회원가입</button>
           </div> -->
-          <button onclick="location.href='/rankingBoard'" id="loginButton" class="button is-primary is-fullwidth">로그인</button>
+          <button onclick="userLogin()" id="loginButton" class="button is-primary is-fullwidth">로그인</button>
           <div class="signUp-link-container">
             <div class="signUp-link">
               <a href="/signUp">회원가입</a>

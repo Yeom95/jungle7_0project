@@ -58,8 +58,19 @@
     </style>
 
     <script>
-
-    </script>
+    function logout() {
+      fetch('/logout', {
+        method: 'POST'
+      }).then(response => {
+        if (response.ok) {
+          document.cookie = 'mytoken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+          window.location.href = '/';
+        } else {
+          alert('Logout failed');
+        }
+      });
+    }
+  </script>
 
     </head>
     <body>

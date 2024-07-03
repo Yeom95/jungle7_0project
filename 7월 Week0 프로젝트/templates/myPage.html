@@ -73,7 +73,11 @@
 
 {% for i in [7, 1, 2, 3, 4, 5, 6] %}
   {% set day_data = weekInfo | selectattr("day_of_week", "equalto", i) | list %}
-  {% set date_value = day_data[0]['date_costs'][0]['date'] if day_data else '' %}
+  {% if day_data %}
+    {% set date_value = day_data[0]['date_costs'][0]['date'] %}
+  {% else %}
+    {% set date_value = weekDays | selectattr("iso_day", "equalto", i) | map(attribute="date") | list | first %}
+  {% endif %}
   <div onClick="moveDailySpending('{{ date_value }}')" class="box">
     <span class="day">{{ days[i % 7] }}</span>
     {% if day_data %}
