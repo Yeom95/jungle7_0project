@@ -73,7 +73,6 @@ def week_of_month(date):#datetime 타입
     return int(ceil(adjusted_dom/7.0))
 
 def get_week_byStr(date):#string형
-    20240703
     year = int(date[:4])
     month = int(date[4:6])
     day = int(date[6:8])
@@ -81,6 +80,15 @@ def get_week_byStr(date):#string형
     dateTime = datetime.datetime(year,month,day)
 
     return dateTime
+
+def slice_stringDate(stringDate):
+    year = int(stringDate[:4])
+    month = int(stringDate[4:6])
+    day = int(stringDate[6:8])
+
+    return year,month,day
+
+
 
 
 
@@ -92,17 +100,28 @@ def home():
 def signUp():
     return render_template('signUp.html')
 
-@app.route('/dailySpending', methods=['POST'])
-def dailySpending():
-    costDate = request.form['costDate']
-
-    # JSON 응답을 반환
-    return jsonify({'result': 'success', 'costDate': costDate})
-
-@app.route('/dailySpendingPage')
+@app.route('/dailySpending', methods=['GET'])
 def dailySpendingPage():
     costDate = request.args.get('costDate')
-    return render_template('dailySpending.html', date=costDate, user=userID)
+    thisYear,thisMonth,thisDay = slice_stringDate(costDate)
+    costDateTime = get_week_byStr(costDate)
+
+    pipeline = [
+        {"$match": {"userId":userID}},
+        {"$addFields": {
+            "convertedDate": {"$dateFromString": {"dateString": "$date", "format": "%Y%m%d"}}
+        }},
+        {"$match":{"convertedDate":costDateTime}},
+        {"$group": {
+            "_id" : {"$toInt": "$category"},
+            "cost" : {"$toInt": "$cost"}
+        }},
+    ]
+
+    results = list(collection.aggregate(pipeline))
+
+
+    return render_template('dailySpending.html', month=thisMonth,day=thisDay, user=userID)
 
 @app.route('/myPage')
 def myPage():

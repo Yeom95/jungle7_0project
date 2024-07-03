@@ -49,29 +49,7 @@
   <script>
     function moveDailySpending(date)
     {
-      $.ajax({
-                type: "POST",
-                url: "/dailySpending",
-                data: {
-                    costDate: date,
-                },
-                success: function(response) {
-                    if (response['result'] == 'success') {
-                        // 성공 메시지를 표시
-                        alert(response['msg']);
-                        // 페이지를 이동하여 렌더링
-                        window.location.href = `/dailySpendingPage?costDate=${date}`;
-                    } else {
-                        alert(response['msg']);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.log("Error: " + error);
-                    alert("An error occurred: " + xhr.responseText);
-                }
-            });
-          
-          
+      window.location.href = `/dailySpending?costDate=${date}`;
     }
   </script>
 </head>
