@@ -7,14 +7,16 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
   <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
   <script src="https://kit.fontawesome.com/be354233e0.js" crossorigin="anonymous"></script>
+
   <style>
     .box {
       position: relative;
-      height: 100px;
-      margin-bottom: 1rem;
-      width: 100px;
+      height: 200px;
+      /* margin-bottom: 1rem; */
+      width: auto;
       text-align: center;
-      padding: 1rem;
+      /* padding: 1rem; */
+      
     }
     .box .day {
       position: absolute;
@@ -34,6 +36,9 @@
       left: 50%;
       transform: translateX(-50%);
     }
+    .box:hover {
+      background-color: #FFF9EB;
+    }
     .button.is-light:hover {
       background-color: #b5b5b5;
     }
@@ -45,6 +50,16 @@
 
     .is-centered {
       justify-content: center;
+    }
+
+
+    /* 미디어 쿼리 */
+    @media screen and (max-width:1000px){
+       
+        .box {
+          height:100px;
+    
+      }
     }
   </style>
 
@@ -67,7 +82,7 @@
       </div>
 
       <h2 class="title is-3 section-title">이번 주 나의 지출은?</h2>
-      <div class="columns is-centered">
+      <div class="columns is-1-mobile is-centered">
 
         {% set days = ['일', '월', '화', '수', '목', '금', '토'] %}
 
@@ -78,7 +93,19 @@
   {% else %}
     {% set date_value = weekDays | selectattr("iso_day", "equalto", i) | map(attribute="date") | list | first %}
   {% endif %}
-  <div onClick="moveDailySpending('{{ date_value }}')" class="box">
+          <div class="column">
+            <div onClick="moveDailySpending('{{ date_value }}')" class="box">
+              <span class="day">{{ days[i % 7] }}</span>
+              {% if day_data %}
+              {% set total_cost = day_data[0]['date_costs'] | map(attribute='cost') | sum %}
+                <div class="data">{{ total_cost }}</div>
+              {% else %}
+                <span class="date"></span>
+                <div class="data"></div>
+              {% endif %}
+            </div>
+          </div>
+  <!-- <div onClick="moveDailySpending('{{ date_value }}')" class="box">
     <span class="day">{{ days[i % 7] }}</span>
     {% if day_data %}
     {% set total_cost = day_data[0]['date_costs'] | map(attribute='cost') | sum %}
@@ -87,7 +114,7 @@
       <span class="date"></span>
       <div class="data"></div>
     {% endif %}
-  </div>
+  </div> -->
 {% endfor %}
 
 
