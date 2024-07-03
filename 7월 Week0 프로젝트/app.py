@@ -33,6 +33,7 @@ app.config.update(
     JWT_SECTRET_KEY = "Secret Key"
 )
 
+
 #JWT 확장 모듈을 flask 어플리케이션에 등록
 jwtModule = JWTManager(app)
 
