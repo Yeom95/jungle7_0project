@@ -20,6 +20,9 @@
 
     <title>랭킹 보드 | 정글 거지방</title>
 
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!--style-->
     <style type="text/css">
     .formname 
@@ -92,21 +95,22 @@
       });
     }
     </script>
-
+  
     </head>
     <body>
         <section class="section">
-            <div class="columns is-justify-content-flex-end">
-              <div class="column is-narrow">
-                <button onClick="location.href='/'" class="button is-light subtitle">로그아웃</button>
-              </div>
-              <div class="column is-narrow">
-                <button onClick="location.href='/myPage'" class="button is-warning subtitle">my page</button>
-              </div>
+            <div class="columns is-mobile is-justify-content-flex-end">
+              <div class="column"><button onClick="location.href='/'" class=" is-narrow button is-light subtitle">로그아웃</button></div>
+              <div class="column"><button onClick="location.href='/myPage'" class="column button is-warning subtitle is-narrow">my page</button></div>
+              <div class="column"><button href="./beggerKing" class="column button is-warning subtitle is-narrow">오늘의 거지왕</button></div>
+                
             </div>
             <h1 class="title is-1">Ranking Board</h1>
             <section class="section">
+
               <h2 class="title is-3 section-title">오늘의 절약왕</h2>
+
+              
 
 
             <!-- 1위부터 3위까지 -->
@@ -154,30 +158,6 @@
               </div>
               </div>
             {% endfor %}
-              <!--{#<div class="column">
-                <div class="box">
-                  <p>1위</p>
-                  <p>{{saveweekrank[0]['_id']}}</p>
-                  <p>
-                    {{saveweekrank[0]['total_cost']}}
-                  </p>
-                </div>
-              </div>
-              <div class="column">
-                <div class="box">
-                  <p>2위</p>
-                  <p>{{saveweekrank[1]['_id']}}</p>
-                  <p>
-                    {{saveweekrank[1]['total_cost']}}
-                  </p>
-                </div>
-              </div>
-              <div class="column">
-                <div class="box">
-                  <p>3위</p>
-                  <p>ㅇㅇㅇ</p>
-                </div>
-              </div>#}-->
             </div>
 
 
@@ -187,7 +167,7 @@
               <div class="box">
                   <div class="columns is-mobile is-justify-content-space-between">
                     <div class="column is-1 has-text-centered is-flex is-align-items-center is-justify-content-center">
-                        <div class="out-podium-number title">{{ i + 1 }}</div>
+                        <div class="out-podium-number title is-5">{{ i + 1 }}</div>
                       </div>
                       <div class="column  has-text-centered is-flex is-align-items-center is-justify-content-center">
                         <span class="out-podium-id subtitle is-4">
@@ -210,30 +190,6 @@
                   </div>
               </div>
               {% endfor %}
-              <!--{#<div class="column">
-                <div class="box">
-                  <p>1위</p>
-                  <p>{{saveweekrank[0]['_id']}}</p>
-                  <p>
-                    {{saveweekrank[0]['total_cost']}}
-                  </p>
-                </div>
-              </div>
-              <div class="column">
-                <div class="box">
-                  <p>2위</p>
-                  <p>{{saveweekrank[1]['_id']}}</p>
-                  <p>
-                    {{saveweekrank[1]['total_cost']}}
-                  </p>
-                </div>
-              </div>
-              <div class="column">
-                <div class="box">
-                  <p>3위</p>
-                  <p>ㅇㅇㅇ</p>
-                </div>
-              </div>#}-->
                   
             </section>
             <hr>
@@ -285,30 +241,6 @@
               </div>
               </div>
             {% endfor %}
-              <!--{#<div class="column">
-                <div class="box">
-                  <p>1위</p>
-                  <p>{{saveweekrank[0]['_id']}}</p>
-                  <p>
-                    {{saveweekrank[0]['total_cost']}}
-                  </p>
-                </div>
-              </div>
-              <div class="column">
-                <div class="box">
-                  <p>2위</p>
-                  <p>{{saveweekrank[1]['_id']}}</p>
-                  <p>
-                    {{saveweekrank[1]['total_cost']}}
-                  </p>
-                </div>
-              </div>
-              <div class="column">
-                <div class="box">
-                  <p>3위</p>
-                  <p>ㅇㅇㅇ</p>
-                </div>
-              </div>#}-->
             </div>
 
             <!-- 추후에 지울 수 있음 -->
@@ -341,34 +273,63 @@
               </div>
               {% endfor %}
 
-              <!--{#<div class="column">
-                <div class="box">
-                  <p>1위</p>
-                  <p>{{saveweekrank[0]['_id']}}</p>
-                  <p>
-                    {{saveweekrank[0]['total_cost']}}
-                  </p>
-                </div>
-              </div>
-              <div class="column">
-                <div class="box">
-                  <p>2위</p>
-                  <p>{{saveweekrank[1]['_id']}}</p>
-                  <p>
-                    {{saveweekrank[1]['total_cost']}}
-                  </p>
-                </div>
-              </div>
-              <div class="column">
-                <div class="box">
-                  <p>3위</p>
-                  <p>ㅇㅇㅇ</p>
-                </div>
-              </div>#}-->
             </section>
         </section>
+
+      <!-- 차트 추가 -->
+      <div id="chartContainer">
+        <canvas id="myPolarAreaChart"></canvas>
+        <script>
+          async function fetchData() {
+            const response = await fetch('/getAllRank');
+            const data = await response.json();
+  
+            const labels = data.labels;
+            const total_costs = data.ratios;
+  
+            createPolarAreaChart(labels, total_costs);
+          }
+  
+          function createPolarAreaChart(labels, data) {
+            var ctx = document.getElementById('myPolarAreaChart').getContext('2d');
+            var myPolarAreaChart = new Chart(ctx, {
+              type: 'polarArea',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: '사용자별 총 비용',
+                  data: data,
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(255, 205, 86, 0.2)',
+                    'rgba(201, 203, 207, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    // 필요에 따라 더 많은 색상을 추가하십시오.
+                  ],
+                  borderColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(75, 192, 192)',
+                    'rgb(255, 205, 86)',
+                    'rgb(201, 203, 207)',
+                    'rgb(54, 162, 235)',
+                    // 필요에 따라 더 많은 색상을 추가하십시오.
+                  ],
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                scales: {
+                  r: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+          }
+          // 페이지 로드 시 fetchData 함수 호출
+          fetchData();
+        </script>
+      </div>
       </body>
-    </html>
-    
-</body>
 </html>
