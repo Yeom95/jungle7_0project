@@ -169,11 +169,55 @@ def myPage():
     }}
 ]
 
-# MongoDB 컬렉션 객체가 있다고 가정합니다
-# `collection`을 실제 컬렉션 이름으로 교체하세요
     results = list(collection.aggregate(pipeline))
 
-    return render_template('myPage.html',weekInfo = results,weekDays=weekList)
+    # 개인 순위 조회 
+    formatted_date = current_date.strftime("%Y%m%d")
+
+    # 당일 랭크 조회 mongoDB 집계 파이프라인 
+    pipeline = [
+    # 저장된 날짜 문자열을 날짜 객체로 변환
+    {"$addFields": {
+        "convertedDate": {"$dateFromString": {"dateString": "$date", "format": "%Y%m%d"}}
+    }},
+    # 변환된 날짜와 현재 날짜에 대한 ISO 주를 계산
+    {"$addFields": {
+        "isoWeekConvertedDate": {"$isoWeek": "$convertedDate"},
+        "isoWeekCurrentDate": {"$isoWeek": current_date}
+    }},
+    # ISO 주가 현재 ISO 주와 일치하는 문서를 찾기
+    {"$match": {"$expr": {"$eq": ["$isoWeekConvertedDate", "$isoWeekCurrentDate"]}}},
+    # userId로 문서를 그룹화하고 cost를 합산
+    {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
+    # total_cost 기준으로 오름차순 정렬
+    {"$sort": {"total_cost": 1}}
+]
+
+    # 주간 랭크 집계 실행
+    weekRank = list(collection.aggregate(pipeline))
+
+    # 당일 랭크 조회 mongoDB 집계 파이프라인 
+    pipeline2 = [
+    {"$match": {"date" : formatted_date}},  # date로 필터링
+    {"$group": {"_id": "$userId", "total_cost": {"$sum": {"$toInt": "$cost"}}}},
+    {"$sort": {"total_cost": 1}}  # total_cost를 오름차순으로 정렬
+]
+    
+    dayrank = list(collection.aggregate(pipeline2))
+
+    myDayRank = None
+    for index, item in enumerate(dayrank):
+        if item['_id'] == userID:
+            myDayRank = index + 1
+            break
+
+    myWeekRank = None
+    for index, item in enumerate(weekRank):
+        if item['_id'] == userID:
+            myWeekRank = index + 1
+            break
+
+    return render_template('myPage.html',weekInfo = results, weekDays=weekList, saveMyDayRank=myDayRank, saveMyWeekRank=myWeekRank)
 
 @app.route('/rankingBoard')
 def rankingBoard():
