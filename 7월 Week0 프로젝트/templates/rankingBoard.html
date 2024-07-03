@@ -57,6 +57,7 @@
     }
     .center-div{
       text-align: center;
+      height:100%;
     }
     </style>
 
@@ -118,7 +119,7 @@
                   {% if savedayrank|length > i %}
                     {{ savedayrank[i]['_id'] }}
                   {% else %}
-                  kansi98
+                  
                   </span>
                   {% endif %}
                 </div>
@@ -128,7 +129,7 @@
                   {% if savedayrank|length > i %}
                     {{ savedayrank[i]['total_cost'] }}
                   {% else %}
-                   kansi98
+                   
                   {% endif %}
                   </span>
                 </div>
@@ -166,20 +167,25 @@
             <!-- 4위부터 6위까지 -->
             {% for i in range(3, 6) %}
               <div class="box">
-                  <div class="columns is-mobile">
-                      <div class="column is-1">
+                  <div class="columns is-mobile is-justify-content-space-between">
+                    <div class="column is-1 has-text-centered is-flex is-align-items-center is-justify-content-center">
                         <div class="title">{{ i + 1 }}</div>
                       </div>
-                      <div class="column is-3">
+                      <div class="column is-3 has-text-centered is-flex is-align-items-center is-justify-content-center">
+                        <span class="subtitle is-4">
                           {% if savedayrank|length > i %}
                               {{ savedayrank[i]['_id'] }}
                           {% else %}
+                          
                           {% endif %}
+                        </span>
+                          
                       </div>
-                      <div class="column is-1">
+                      <div class="column has-text-centered is-flex is-align-items-center is-justify-content-flex-end subtitle is-4">
                         {% if savedayrank|length > i %}
                             {{ savedayrank[i]['total_cost'] }}
                         {% else %}
+                        
                         {% endif %}
                       </div>
                   </div>
@@ -240,7 +246,7 @@
                   {% if saveweekrank|length > i %}
                     {{ saveweekrank[i]['_id'] }}
                   {% else %}
-                  kansi98
+                  
                   </span>
                     
                   {% endif %}
@@ -251,7 +257,7 @@
                     {% if saveweekrank|length > i %}
                       {{ saveweekrank[i]['total_cost'] }}
                     {% else %}
-                      kansi98
+                      
                     {% endif %}
                     </span>
                   
@@ -288,27 +294,30 @@
             <!-- 추후에 지울 수 있음 -->
             <!-- 4위부터 6위까지 -->
             {% for i in range(3, 6) %}
-            <div class="box">
-              <div class="columns is-mobile">
-                <div class="column is-1">
-                  <div class="title">{{ i + 1 }}</div>
-                </div>
-                <div class="column is-3 has-text-centered is-flex is-align-items-center is-justify-content-center">
-                  {% if saveweekrank|length > i %}
-                    <span>{{ saveweekrank[i]['_id'] }}</span>
-                  {% else %}
-                    <span></span>
-                  {% endif %}
-                </div>
-                <div class="column is-1">
-                  {% if saveweekrank|length > i %}
-                    {{ saveweekrank[i]['total_cost'] }}
-                  {% else %}
-                  {% endif %}
-                </div>
+              <div class="box">
+                  <div class="columns is-mobile is-justify-content-space-between">
+                    <div class="column is-1 has-text-centered is-flex is-align-items-center is-justify-content-center">
+                        <div class="title">{{ i + 1 }}</div>
+                      </div>
+                      <div class="column is-3 has-text-centered is-flex is-align-items-center is-justify-content-center">
+                        <span class="subtitle is-4">
+                          {% if saveweekrank|length > i %}
+                              {{ saveweekrank[i]['_id'] }}
+                          {% else %}
+                          {% endif %}
+                        </span>
+                          
+                      </div>
+                      <div class="column has-text-centered is-flex is-align-items-center is-justify-content-flex-end subtitle is-4">
+                        {% if saveweekrank|length > i %}
+                            {{ saveweekrank[i]['total_cost'] }}
+                        {% else %}
+                        
+                        {% endif %}
+                      </div>
+                  </div>
               </div>
-            </div>
-          {% endfor %}
+              {% endfor %}
 
               <!--{#<div class="column">
                 <div class="box">
