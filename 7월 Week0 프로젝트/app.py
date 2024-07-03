@@ -107,7 +107,7 @@ def dailySpendingPage():
     costDateTime = get_week_byStr(costDate)
 
     pipeline = [
-        {"$match": {"userId":"sen"}},
+        {"$match": {"userId":userID}},
         {"$addFields": {
             "convertedDate": {"$dateFromString": {"dateString": "$date", "format": "%Y%m%d"}}
         }},
@@ -122,10 +122,10 @@ def dailySpendingPage():
     results = list(collection.aggregate(pipeline))
 
 
-    return render_template('dailySpending.html', month=thisMonth,day=thisDay, user=userID)
+    return render_template('dailySpending.html', costMember = results,month=thisMonth,day=thisDay, user=userID)
 
 @app.route('/myPage')
-def myPage():
+def myPage(): 
     current_date = datetime.datetime.now()
     current_iso_week = current_date.isocalendar()[1]
     current_year = current_date.year
