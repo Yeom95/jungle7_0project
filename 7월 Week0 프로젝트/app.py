@@ -107,16 +107,17 @@ def dailySpendingPage():
     costDateTime = get_week_byStr(costDate)
 
     pipeline = [
-        {"$match": {"userId":userID}},
+        {"$match": {"userId":"sen"}},
         {"$addFields": {
             "convertedDate": {"$dateFromString": {"dateString": "$date", "format": "%Y%m%d"}}
         }},
         {"$match":{"convertedDate":costDateTime}},
-        {"$group": {
-            "_id" : {"$toInt": "$category"},
-            "cost" : {"$toInt": "$cost"}
-        }},
-    ]
+        {"$project": {
+        "_id": 0,
+        "category": 1,
+        "cost": 1
+    }}
+]
 
     results = list(collection.aggregate(pipeline))
 

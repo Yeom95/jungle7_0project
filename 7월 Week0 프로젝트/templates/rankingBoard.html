@@ -30,8 +30,6 @@
     #formvalue {
       width: 80%;
     }
-<<<<<<< Updated upstream
-=======
     
     #registerBtn
     {
@@ -56,7 +54,6 @@
       flex-grow: 3;
     }
     </style>
->>>>>>> Stashed changes
 
     #registerBtn {
       margin-top: 5px;
@@ -83,98 +80,6 @@
     }
   </script>
 
-<<<<<<< Updated upstream
-</head>
-
-<body>
-  <section class="section">
-    <div class="container">
-      <div class="columns is-justify-content-space-between">
-        <div class="column is-narrow">
-          <button onclick="logout()" class="button is-light">로그 아웃</button>
-        </div>
-        <div class="column is-narrow">
-          <button onClick="location.href='/myPage'" class="button is-warning">my page</button>
-        </div>
-      </div>
-
-      <h2 class="title is-4 section-title">오늘의 절약왕</h2>
-      <div class="columns">
-        {% for i in range(3) %}
-        <div class="box">
-          <p>{{ i + 1 }}위</p>
-          <p>
-            {% if savedayrank|length > i %}
-            {{ savedayrank[i]['_id'] }}
-            {% else %}
-            &nbsp;
-            {% endif %}
-          </p>
-          <p>
-            {% if savedayrank|length > i %}
-            {{ savedayrank[i]['total_cost'] }}
-            {% else %}
-            &nbsp;
-            {% endif %}
-          </p>
-        </div>
-        {% endfor %}
-
-        <!--{#<div class="column">
-                <div class="box">
-                  <p>1위</p>
-                  <p>
-                    {{savedayrank[0]['_id']}}
-                  </p>
-                  <p>
-                    {{savedayrank[0]['total_cost']}}
-                  </p>
-                </div>
-              </div>
-              <div class="column">
-                <div class="box">
-                  <p>2위</p>
-                  <p>
-                    {{savedayrank[1]['_id']}}</p>
-                  <p>
-                    {{savedayrank[1]['total_cost']}}</p>
-                </div>
-              </div>
-              <div class="column">
-                <div class="box">
-                  <p>3위</p>
-                  <p>ㅇㅇㅇ</p>        
-                    <p>
-                      0</p>
-                </div>
-              </div>#}-->
-      </div>
-
-      <hr>
-
-      <h2 class="title is-4 section-title">이 주의 절약왕</h2>
-      <div class="columns">
-        {% for i in range(3) %}
-        <div class="box">
-          <p>{{ i + 1 }}위</p>
-          <p>
-            {% if saveweekrank|length > i %}
-            {{ saveweekrank[i]['_id'] }}
-            {% else %}
-            &nbsp;
-            {% endif %}
-          </p>
-          <p>
-            {% if saveweekrank|length > i %}
-            {{ saveweekrank[i]['total_cost'] }}
-            {% else %}
-            &nbsp;
-            {% endif %}
-          </p>
-        </div>
-        {% endfor %}
-        <!--{#<div class="column">
-=======
     </head>
     <body>
         <section class="section">
@@ -236,7 +141,6 @@
               </div>
             {% endfor %}
               <!--{#<div class="column">
->>>>>>> Stashed changes
                 <div class="box">
                   <p>1위</p>
                   <p>{{saveweekrank[0]['_id']}}</p>
@@ -260,11 +164,6 @@
                   <p>ㅇㅇㅇ</p>
                 </div>
               </div>#}-->
-<<<<<<< Updated upstream
-      </div>
-    </div>
-  </section>
-=======
             </div>
 
 
@@ -451,7 +350,6 @@
       </body>
     </html>
     
->>>>>>> Stashed changes
 </body>
 
 </html>
