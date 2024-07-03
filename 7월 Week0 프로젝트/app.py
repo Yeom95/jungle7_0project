@@ -101,6 +101,18 @@ def home():
 def signUp():
     return render_template('signUp.html')
 
+@app.route('/doubleCheck',methods=['POST'])
+def doubleCheck():
+    checkID = request.form['userID']
+
+    if(collection.find({'userId':checkID})):
+        return jsonify({"error": "error"})
+    else:
+        return jsonify({'result':'success'})
+    
+
+
+
 @app.route('/dailySpending', methods=['GET'])
 def dailySpendingPage():
     costDate = request.args.get('costDate')

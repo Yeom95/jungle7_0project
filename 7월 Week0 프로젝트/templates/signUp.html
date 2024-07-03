@@ -33,7 +33,19 @@
 
     function doubleCheck()
     {
-      
+      $.ajax({
+          type:"POST",
+          url:"/doubleCheck",
+          data:{
+            userID:$("#id").val(),
+          },
+          success:function(response){
+            if(response["result"] != "success"){
+              alert("다른 아이디를 사용해주세요")
+                    }
+            
+          }
+      })
     }
   </script>
 
@@ -65,7 +77,7 @@
               <input class="input" type="text" id="id" placeholder="Enter your ID">
             </div>
             <div class="control">
-              <button class="button is-info">중복확인</button>
+              <button onclick="doubleCheck()"class="button is-info">중복확인</button>
             </div>
           </div>
         </div>
