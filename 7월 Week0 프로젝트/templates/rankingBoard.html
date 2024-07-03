@@ -59,8 +59,25 @@
       text-align: center;
       height:100%;
     }
+    .out-podium-id.subtitle.is-4 {
+      width:max-content;
+    }
+    .out-podium-cost {
+      padding: 0;
+    }
     </style>
 
+    <!-- 창 사이즈에 따라 클래스 추가 및 삭제  -->
+    <script>
+      function moveDailySpending(date)
+      {
+          window.location.href = `/dailySpending?costDate=${date}`;
+      }
+  
+
+    </script>
+
+    <!-- 로그인 -->
     <script>
     function logout() {
       fetch('/logout', {
@@ -109,28 +126,29 @@
 
             </div>
             <!-- 1위부터 3위까지 -->
-            <div class="columns is-mobile">
+            <div class="columns ">
               {% for i in range(3) %}
               <div class="column ">
               <div class="box has-background-primary">
                 <!-- <p>{{ i + 1 }}위</p> -->
                 <div class="center-div">
-                  <span class="title is-3">
+                  <span class="in-podium-id title is-3">
                   {% if savedayrank|length > i %}
                     {{ savedayrank[i]['_id'] }}
                   {% else %}
-                  
+                  kansi98989898989
                   </span>
                   {% endif %}
                 </div>
                 <hr>
                 <div class="center-div">
-                  <span class="subtitle is-1">
+                  <span class="in-podium-cost subtitle is-1">
                   {% if savedayrank|length > i %}
                     {{ savedayrank[i]['total_cost'] }}
                   {% else %}
-                   
+                   10000
                   {% endif %}
+                  원
                   </span>
                 </div>
               </div>
@@ -169,24 +187,25 @@
               <div class="box">
                   <div class="columns is-mobile is-justify-content-space-between">
                     <div class="column is-1 has-text-centered is-flex is-align-items-center is-justify-content-center">
-                        <div class="title">{{ i + 1 }}</div>
+                        <div class="out-podium-number title">{{ i + 1 }}</div>
                       </div>
-                      <div class="column is-3 has-text-centered is-flex is-align-items-center is-justify-content-center">
-                        <span class="subtitle is-4">
+                      <div class="column  has-text-centered is-flex is-align-items-center is-justify-content-center">
+                        <span class="out-podium-id subtitle is-4">
                           {% if savedayrank|length > i %}
                               {{ savedayrank[i]['_id'] }}
                           {% else %}
-                          
+                          kansi98989898989
                           {% endif %}
                         </span>
                           
                       </div>
-                      <div class="column has-text-centered is-flex is-align-items-center is-justify-content-flex-end subtitle is-4">
+                      <div class="column has-text-centered is-flex is-align-items-center is-justify-content-flex-end subtitle is-4 out-podium-cost">
                         {% if savedayrank|length > i %}
                             {{ savedayrank[i]['total_cost'] }}
                         {% else %}
-                        
+                        10000
                         {% endif %}
+                        원
                       </div>
                   </div>
               </div>
@@ -236,29 +255,30 @@
 
              </div>
 
-             <div class="columns is-mobile">
+             <div class="columns ">
               {% for i in range(3) %}
               <div class="column ">
               <div class="box has-background-primary">
                 <!-- <p>{{ i + 1 }}위</p> -->
                 <div class="center-div">
-                  <span class="title is-3">
+                  <span class="title is-3 in-podium-id">
                   {% if saveweekrank|length > i %}
                     {{ saveweekrank[i]['_id'] }}
                   {% else %}
-                  
+                  kansi98989898989
                   </span>
                     
                   {% endif %}
                 </div>
                 <hr>
                 <div class="center-div">
-                    <span class="subtitle is-1">
+                    <span class="subtitle is-1 in-podium-cost">
                     {% if saveweekrank|length > i %}
                       {{ saveweekrank[i]['total_cost'] }}
                     {% else %}
-                      
+                    10000
                     {% endif %}
+                    원
                     </span>
                   
                 </div>
@@ -297,23 +317,25 @@
               <div class="box">
                   <div class="columns is-mobile is-justify-content-space-between">
                     <div class="column is-1 has-text-centered is-flex is-align-items-center is-justify-content-center">
-                        <div class="title">{{ i + 1 }}</div>
+                        <div class="out-podium-number title">{{ i + 1 }}</div>
                       </div>
-                      <div class="column is-3 has-text-centered is-flex is-align-items-center is-justify-content-center">
-                        <span class="subtitle is-4">
+                      <div class="column has-text-centered is-flex is-align-items-center is-justify-content-center">
+                        <span class="subtitle is-4 out-podium-id">
                           {% if saveweekrank|length > i %}
                               {{ saveweekrank[i]['_id'] }}
                           {% else %}
+                          kansi98989898989
                           {% endif %}
                         </span>
                           
                       </div>
-                      <div class="column has-text-centered is-flex is-align-items-center is-justify-content-flex-end subtitle is-4">
+                      <div class="column has-text-centered is-flex is-align-items-center is-justify-content-flex-end subtitle is-4 out-podium-cost">
                         {% if saveweekrank|length > i %}
                             {{ saveweekrank[i]['total_cost'] }}
                         {% else %}
-                        
+                        10000
                         {% endif %}
+                        원
                       </div>
                   </div>
               </div>
