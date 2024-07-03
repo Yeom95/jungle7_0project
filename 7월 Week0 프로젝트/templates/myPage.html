@@ -9,6 +9,7 @@
   <script src="https://kit.fontawesome.com/be354233e0.js" crossorigin="anonymous"></script>
 
   <style>
+
     .box {
       position: relative;
       height: 200px;
@@ -22,17 +23,18 @@
       position: absolute;
       top: 0;
       left: 0;
-      margin: 0.5rem;
+      margin: 0.5rem 0 0 0.5rem;
     }
     .box .date {
       position: absolute;
       top: 0;
       right: 0;
-      margin: 0.5rem;
+      margin: 0.5rem 0.5rem 0 0 ;
+      
     }
     .box .data {
       position: absolute;
-      bottom: 0;
+      bottom: 40%;
       left: 50%;
       transform: translateX(-50%);
     }
@@ -58,16 +60,36 @@
        
         .box {
           height:100px;
+        }
+
+        .data-font-size {
+          font-size: 14px;
+          position: absolute;
+          bottom: 30%;
+          left: 50%;
+          transform: translateX(-50%);
+          
+        }
     
-      }
     }
   </style>
 
+
+  <!-- 창 사이즈에 따라 클래스 추가 및 삭제  -->
   <script>
-    function moveDailySpending(date)
-    {
-      window.location.href = `/dailySpending?costDate=${date}`;
-    }
+  $(window).resize(function() {
+        if($(window).width() < 1000) {
+            $(".data").removeClass('is-4');
+        }
+    });
+    $(document).ready(function() {
+        if($(window).width() < 1000) {
+            $(".data").addClass('data-font-size');
+        }
+    }); 
+</script>
+  <script>
+    document.write("hello world!"); // script 태그 안에 작성한 코드가 실행된다.
   </script>
 </head>
 <body>
@@ -95,13 +117,23 @@
   {% endif %}
           <div class="column">
             <div onClick="moveDailySpending('{{ date_value }}')" class="box">
-              <span class="day">{{ days[i % 7] }}</span>
+              {% if days[i % 7]=="일" %}
+                <span class="day subtitle has-text-danger">{{ days[i % 7] }}</span>
+                <span class="date subtitle is-4 has-text-danger">{{date_value[6:8]}}</span>
+              {% elif days[i % 7]=="토" %}
+                <span class="day subtitle has-text-link">{{ days[i % 7] }}</span>
+                <span class="date subtitle is-4 has-text-link">{{date_value[6:8]}}</span>
+              {% else %}
+                <span class="day subtitle">{{ days[i % 7] }}</span>
+                <span class="date subtitle is-4">{{date_value[6:8]}}</span>
+              {% endif %}
+
               {% if day_data %}
               {% set total_cost = day_data[0]['date_costs'] | map(attribute='cost') | sum %}
-                <div class="data">{{ total_cost }}</div>
+                <div class="data subtitle is-4 has-text-primary">{{ total_cost }}원</div>
               {% else %}
-                <span class="date"></span>
-                <div class="data"></div>
+                <div class="data subtitle is-4 has-text-primary"></div>
+                <!-- <div class="data subtitle is-4 has-text-primary">4000</div> -->
               {% endif %}
             </div>
           </div>
