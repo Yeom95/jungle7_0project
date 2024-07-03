@@ -106,7 +106,7 @@
             </div>
        
               <div>
-                <button id="deleteBtn${num}" class="button is-danger" onclick="deleteBox('${id}',${thing},${cost},${num})">삭제</button>
+                <button id="deleteBtn${num}" class="button is-danger" onclick="deleteBox('${id}','${thing}',${cost},${num})">삭제</button>
                 <button id="editBtn${num}" class="button is-success" onclick="changeEditMode(${num})">수정</button>
               </div>
           </div>
@@ -127,7 +127,7 @@
               </div>
               
               <div>
-                <button class="button is-warning" onclick="editBox('${id}',${thing},${cost},${num})">저장</button>
+                <button class="button is-warning" onclick="editBox('${id}','${thing}',${cost},${num})">저장</button>
               </div>
             </div>`;
           $("#box-list").append(temp_html);

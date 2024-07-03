@@ -166,7 +166,7 @@ def dailySpendingBoxDelete():
 @app.route('/dailySpendingBoxEdit',methods=['POST'])
 def dailySpendingBoxEdit():
     editID = request.form['edit_ID']
-    editCategory = int(request.form['edit_category'])
+    editCategory = request.form['edit_category']
     editCost = int(request.form['edit_cost'])
 
     collection.update_one({'_id':ObjectId(editID)},{'$set':{'category':editCategory,'cost':editCost}})
