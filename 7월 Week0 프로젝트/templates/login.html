@@ -52,6 +52,14 @@
 
     <script>
       function userLogin(){
+        let id = $("#id").val().trim();
+        let pw = $("#pw").val().trim();
+        
+        if (!id || !pw) {
+          alert("입력양식을 모두 입력해주세요");
+          location.reload(); // 페이지를 새로고침합니다.
+          return;
+        }
         $.ajax({
           type:"POST",
           url:"/login",
